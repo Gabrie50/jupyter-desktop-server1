@@ -1,3 +1,11 @@
 #!/bin/sh
+
+# (1) Mata qualquer VNC anterior, caso esteja rodando na :1
+vncserver -kill :1 >/dev/null 2>&1
+
+# (2) Sobe o servidor VNC com a resolução desejada
+vncserver :1 -geometry 1920x1080 -depth 24
+
+# (3) Continua para a sessão do Xfce
 cd "$HOME"
 exec /usr/bin/dbus-launch xfce4-session
