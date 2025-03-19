@@ -1,11 +1,9 @@
 #!/bin/sh
-
-# Define a resolução da tela (geometry)
-export DISPLAY=:1
-vncserver :1 -geometry 1920x1080 -depth 24 || echo "VNC já está rodando"
-
-# Carrega a sessão do XFCE
 cd "$HOME"
-unset SESSION_MANAGER
-unset DBUS_SESSION_BUS_ADDRESS
+
+# Define a resolução maior no TurboVNC
+export DISPLAY=:1
+vncserver :1 -geometry 1920x1080 -depth 24 -localhost no
+
+# Inicia o XFCE
 exec /usr/bin/dbus-launch --exit-with-session xfce4-session
