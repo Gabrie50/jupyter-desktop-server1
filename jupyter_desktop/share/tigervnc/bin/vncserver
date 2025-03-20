@@ -42,7 +42,7 @@ $vncClasses = "";
 # your site
 #
 
-$geometry = "1624x968";
+$geometry = "900x1680";
 #$depth = 16;
 $vncJavaFiles = (((-d "$vncClasses") && "$vncClasses") ||
                  ((-d "/usr/share/vnc/classes") && "/usr/share/vnc/classes") ||
