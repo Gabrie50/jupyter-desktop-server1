@@ -6,7 +6,7 @@ import tempfile
 # Define o diretório atual do script
 HERE = os.path.dirname(os.path.abspath(__file__))
 
-def setup_desktop(geometry='1680x400'):
+def setup_desktop(geometry='1380x700'):
     """
     Configura o ambiente de desktop para o VNC server.
     
