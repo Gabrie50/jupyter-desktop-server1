@@ -3,32 +3,30 @@ import shlex
 from shutil import which
 import tempfile
 
-# Define o diretório atual do script
 HERE = os.path.dirname(os.path.abspath(__file__))
 
-def setup_desktop(geometry='1380x700'):
-    """
-    Configura o ambiente de desktop para o VNC server.
-    
-    Args:
-        geometry (str): Resolução da tela no formato 'LARGURAxALTURA'. Padrão é '1680x1050'.
-    
-    Returns:
-        dict: Configurações para iniciar o servidor VNC e o WebSockify.
-    """
+def setup_desktop():
     # Cria um diretório temporário seguro para os sockets
     sockets_dir = tempfile.mkdtemp()
     sockets_path = os.path.join(sockets_dir, 'vnc-socket')
-
-    # Verifica se o vncserver está instalado no sistema
     vncserver = which('vncserver')
 
+    # Detecta a resolução da tela usando o comando "xdpyinfo"
+    try:
+        import subprocess
+        output = subprocess.check_output("xdpyinfo | grep dimensions", shell=True).decode()
+        screen_resolution = output.split()[1]
+    except Exception as e:
+        print(f"Falha ao detectar a resolução da tela: {e}")
+        screen_resolution = "1920x1080"  # Resolução padrão de fallback
+
     if vncserver:
-        # Usa o vncserver do sistema, se disponível
-        vnc_args = [vncserver]
+        vnc_args = [
+            vncserver,
+        ]
         socket_args = []
     else:
-        # Usa o TigerVNC empacotado (caso o vncserver não esteja instalado)
+        # Usa o TigerVNC incluso, se não encontrar outro VNC
         vnc_args = [
             os.path.join(HERE, 'share/tigervnc/bin/vncserver'),
             '-rfbunixpath', sockets_path,
@@ -37,17 +35,16 @@ def setup_desktop(geometry='1380x700'):
             '--unix-target', sockets_path
         ]
 
-    # Monta o comando para iniciar o VNC server
+    # Define o comando do servidor VNC com a resolução dinâmica
     vnc_command = ' '.join(shlex.quote(p) for p in (vnc_args + [
         '-verbose',
         '-xstartup', os.path.join(HERE, 'share/xstartup'),
-        '-geometry', geometry,  # Usa a geometria fornecida pelo usuário
+        '-geometry', screen_resolution,
         '-SecurityTypes', 'None',
         '-fg',
         ':1',
     ]))
 
-    # Retorna a configuração completa para o servidor VNC e WebSockify
     return {
         'command': [
             'websockify', '-v',
@@ -59,8 +56,9 @@ def setup_desktop(geometry='1380x700'):
             '/bin/sh', '-c',
             f'cd {os.getcwd()} && {vnc_command}'
         ],
-        'port': 5901,  # Porta padrão do VNC
-        'timeout': 30,  # Tempo limite de conexão
-        'mappath': {'/': '/vnc.html'},  # Mapeamento do caminho do noVNC
-        'new_browser_window': True  # Abre em uma nova janela do navegador
-    }
+        'port': 5901,
+        'timeout': 30,
+        'mappath': {'/': '/vnc.html'},
+        'new_browser_window': True
+        }
+    
