@@ -12,9 +12,7 @@ def setup_desktop():
     vncserver = which('vncserver')
 
     if vncserver:
-        vnc_args = [
-            vncserver,
-        ]
+        vnc_args = [vncserver]
         socket_args = []
     else:
         # Usa TigerVNC incluído
@@ -22,18 +20,17 @@ def setup_desktop():
             os.path.join(HERE, 'share/tigervnc/bin/vncserver'),
             '-rfbunixpath', sockets_path,
         ]
-        socket_args = [
-            '--unix-target', sockets_path
-        ]
+        socket_args = ['--unix-target', sockets_path]
 
-    # Define o comando com a resolução adaptável
+    # Usa uma resolução inicial e ativa a redimensionável
     vnc_command = ' '.join(shlex.quote(p) for p in (vnc_args + [
         '-verbose',
         '-xstartup', os.path.join(HERE, 'share/xstartup'),
-        '-geometry', '1920x1080',  # Resolução inicial
+        '-geometry', '1600x900',
         '-localhost', 'yes',
         '-SecurityTypes', 'None',
         '-fg',
+        '-randr', '1600x900,1920x1080,2560x1440,3840x2160',
         ':1',
     ]))
 
@@ -50,7 +47,7 @@ def setup_desktop():
         ],
         'port': 5901,
         'timeout': 30,
-        'mappath': {'/': '/vnc.html?resize=scale'},
+        'mappath': {'/': '/vnc.html?resize=remote'},
         'new_browser_window': True
     }
     
