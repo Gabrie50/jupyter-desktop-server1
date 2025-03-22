@@ -43,7 +43,7 @@ def setup_desktop():
         'command': [
             'websockify', '-v',
             '--web', os.path.join(HERE, 'share/web/noVNC-1.6.0'),
-            '--heartbeat', '30',
+            '--heartbeat', '0',
             '5901',
         ] + socket_args + [
             '--',
@@ -51,7 +51,7 @@ def setup_desktop():
             f'cd {os.getcwd()} && {vnc_command}'
         ],
         'port': 5901,
-        'timeout': 0,
+        'timeout': 30,
         'mappath': {'/': '/vnc.html'},
         'new_browser_window': True
     }
