@@ -6,11 +6,6 @@ import tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 def setup_desktop():
-    # Detecta a resolução da tela automaticamente
-    width = os.getenv("SCREEN_WIDTH", "1920")
-    height = os.getenv("SCREEN_HEIGHT", "1080")
-    resolution = f"{width}x{height}"
-
     # Cria um diretório seguro temporário para os sockets
     sockets_dir = tempfile.mkdtemp()
     sockets_path = os.path.join(sockets_dir, 'vnc-socket')
@@ -27,10 +22,10 @@ def setup_desktop():
         ]
         socket_args = ['--unix-target', sockets_path]
 
+    # Comando para iniciar o servidor VNC
     vnc_command = ' '.join(shlex.quote(p) for p in (vnc_args + [
         '-verbose',
         '-xstartup', os.path.join(HERE, 'share/xstartup'),
-        '-geometry', resolution,
         '-SecurityTypes', 'None',
         '-fg',
         ':1',
