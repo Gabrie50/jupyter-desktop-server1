@@ -51,7 +51,7 @@ def setup_desktop():
             f'cd {os.getcwd()} && {vnc_command}'
         ],
         'port': 5901,
-        'timeout': 30,
+        'timeout': 0,
         'mappath': {'/': '/vnc.html'},
         'new_browser_window': True
     }
