@@ -1,7 +1,7 @@
-diff --git a/jupyter_desktop/share/web/noVNC-1.6.0/vnc_lite.html b/jupyter_desktop/share/web/noVNC-1.6.0/vnc_lite.html
+diff --git a/jupyter_desktop/share/web/noVNC-1.6.0/vnc.html b/jupyter_desktop/share/web/noVNC-1.6.0/vnc.html
 index d17ab9e..a9e3e9b 100644
---- a/jupyter_desktop/share/web/noVNC-1.6.0/vnc_lite.html
-+++ b/jupyter_desktop/share/web/noVNC-1.6.0/vnc_lite.html
+--- a/jupyter_desktop/share/web/noVNC-1.6.0/vnc.html
++++ b/jupyter_desktop/share/web/noVNC-1.6.0/vnc.html
 @@ -3,6 +3,8 @@
  <head>
  
@@ -16,7 +16,7 @@ index d17ab9e..a9e3e9b 100644
          let port = readQueryVariable('port', window.location.port);
          const password = readQueryVariable('password');
 -        const path = readQueryVariable('path', 'websockify');
-+        // MODIFICATION FROM vnc_lite.html
++        // MODIFICATION FROM vnc.html
 +        const path = readQueryVariable('path', window.location.pathname.replace(/[^/]*$/, '').substring(1) + 'websockify');
  
          // | | |         | | |
@@ -26,7 +26,7 @@ index d17ab9e..a9e3e9b 100644
          // Set parameters that can be changed on an active connection
          rfb.viewOnly = readQueryVariable('view_only', false);
 -        rfb.scaleViewport = readQueryVariable('scale', false);
-+        // MODIFICATION FROM vnc_lite.html
++        // MODIFICATION FROM vnc.html
 +        rfb.scaleViewport = readQueryVariable('scale', true);
      </script>
  </head>
