@@ -6,7 +6,12 @@ import tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 def setup_desktop():
-    # Cria diretório seguro temporário para o socket
+    # Detecta a resolução da tela automaticamente
+    width = os.getenv("SCREEN_WIDTH", "1920")
+    height = os.getenv("SCREEN_HEIGHT", "1080")
+    resolution = f"{width}x{height}"
+
+    # Cria um diretório seguro temporário para os sockets
     sockets_dir = tempfile.mkdtemp()
     sockets_path = os.path.join(sockets_dir, 'vnc-socket')
     vncserver = which('vncserver')
@@ -15,22 +20,19 @@ def setup_desktop():
         vnc_args = [vncserver]
         socket_args = []
     else:
-        # Usa TigerVNC incluído
+        # Usa o TigerVNC incluso
         vnc_args = [
             os.path.join(HERE, 'share/tigervnc/bin/vncserver'),
             '-rfbunixpath', sockets_path,
         ]
         socket_args = ['--unix-target', sockets_path]
 
-    # Usa uma resolução inicial e ativa a redimensionável
     vnc_command = ' '.join(shlex.quote(p) for p in (vnc_args + [
         '-verbose',
         '-xstartup', os.path.join(HERE, 'share/xstartup'),
-        '-geometry', '1600x900',
-        '-localhost', 'yes',
+        '-geometry', resolution,
         '-SecurityTypes', 'None',
         '-fg',
-        '-randr', '1600x900,1920x1080,2560x1440,3840x2160',
         ':1',
     ]))
 
@@ -47,7 +49,7 @@ def setup_desktop():
         ],
         'port': 5901,
         'timeout': 30,
-        'mappath': {'/': '/vnc.html?resize=remote'},
+        'mappath': {'/': '/vnc.html'},
         'new_browser_window': True
     }
     
