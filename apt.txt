@@ -1,5 +1,5 @@
 dbus-x11
-firefox
+brave
 xfce4
 xfce4-panel
 xfce4-session
