@@ -28,5 +28,14 @@ ADD . /opt/install
 RUN fix-permissions /opt/install
 
 USER $NB_USER
+
+# Atualiza o Conda antes de tentar qualquer instalação
+RUN conda config --set ssl_verify false && \
+    conda update -n base -c defaults conda -y && \
+    conda clean --all -y
+
+# Vai para a pasta de instalação e aplica o ambiente Conda
 RUN cd /opt/install && \
-   conda env update -n base --file environment.yml
+    conda env update -n base --file environment.yml && \
+    conda clean --all -y
+    
