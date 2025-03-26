@@ -2,9 +2,13 @@ FROM jupyter/base-notebook:python-3.7.6
 
 USER root
 
-# Atualiza pacotes e instala os essenciais
+# Atualiza pacotes e instala apenas o essencial
 RUN apt-get -y update && \
-    apt-get install -y dbus-x11 fluxbox xorg x11-xserver-utils xinit wget chromium-browser 
+    apt-get install -y \
+    dbus-x11 xorg x11-xserver-utils xinit wget \
+    i3 chromium-browser \
+    --no-install-recommends && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Instala o TurboVNC
 ARG TURBOVNC_VERSION=2.2.6
@@ -14,11 +18,11 @@ RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}
     rm ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
     ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
-# Corrige permissões finais
+# Corrige permissões
 RUN chown -R $NB_UID:$NB_GID $HOME
 
-# Configura o Fluxbox como gerenciador de janelas padrão
-RUN echo "fluxbox &" > /root/.xinitrc && chmod +x /root/.xinitrc
+# Configura o i3wm como gerenciador de janelas padrão
+RUN echo "exec i3" > /root/.xinitrc && chmod +x /root/.xinitrc
 
 # Configuração para rodar o Chromium sem problemas gráficos
 RUN echo "CHROMIUM_FLAGS='--no-sandbox --disable-gpu --disable-software-rasterizer'" >> /etc/environment
