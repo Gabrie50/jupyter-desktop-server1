@@ -5,5 +5,5 @@ cd "$HOME"
 export DISPLAY=:1
 vncserver :1 -geometry 1920x1080 -depth 24 -localhost no
 
-# Inicia o XFCE
-exec /usr/bin/dbus-launch --exit-with-session xfce4-session
+# Inicia o Fluxbox usando o mesmo caminho
+exec /usr/bin/dbus-launch --exit-with-session fluxbox
