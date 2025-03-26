@@ -1,8 +1,5 @@
-dbus-x11
-Opera One
-xfce4
-xfce4-panel
-xfce4-session
-xfce4-settings
-xorg
-xubuntu-icon-theme
+dbus-x11 
+fluxbox xorg 
+x11-xserver-utils 
+xinit 
+wget chromium-browser 
