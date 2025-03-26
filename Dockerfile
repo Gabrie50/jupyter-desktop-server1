@@ -4,18 +4,9 @@ USER root
 
 # Atualiza pacotes e instala os essenciais
 RUN apt-get -y update && \
-    apt-get install -y dbus-x11 xfce4 xfce4-panel xfce4-session xfce4-settings xorg xubuntu-icon-theme wget
+    apt-get install -y dbus-x11 fluxbox xorg x11-xserver-utils xinit wget chromium-browser 
 
-# Instala o Firefox da fonte oficial para evitar versões bugadas
-RUN apt-get install -y software-properties-common && \
-    add-apt-repository -y ppa:mozillateam/ppa && \
-    apt-get update && \
-    apt-get install -y firefox
-
-# Corrige permissões
-RUN chown -R $NB_UID:$NB_GID $HOME
-
-# Baixa e instala o TurboVNC
+# Instala o TurboVNC
 ARG TURBOVNC_VERSION=2.2.6
 RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc_${TURBOVNC_VERSION}_amd64.deb/download" -O turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
     apt-get install -y -q ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
@@ -24,6 +15,15 @@ RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}
     ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
 # Corrige permissões finais
+RUN chown -R $NB_UID:$NB_GID $HOME
+
+# Configura o Fluxbox como gerenciador de janelas padrão
+RUN echo "fluxbox &" > /root/.xinitrc && chmod +x /root/.xinitrc
+
+# Configuração para rodar o Chromium sem problemas gráficos
+RUN echo "CHROMIUM_FLAGS='--no-sandbox --disable-gpu --disable-software-rasterizer'" >> /etc/environment
+
+# Adiciona arquivos extras se necessário
 ADD . /opt/install
 RUN fix-permissions /opt/install
 
