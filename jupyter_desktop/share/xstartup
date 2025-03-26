@@ -6,4 +6,4 @@ export DISPLAY=:1
 vncserver :1 -geometry 1920x1080 -depth 24 -localhost no
 
 # Inicia o Fluxbox
-exec fluxbox org
+exec fluxbox xorg
