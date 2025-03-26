@@ -1,9 +1,3 @@
 #!/bin/sh
-cd "$HOME"
-
-# Define a resolução maior no TurboVNC
-export DISPLAY=:1
-vncserver :1 -geometry 1920x1080 -depth 24 -localhost no
-
-# Inicia o Fluxbox
-exec fluxbox 
+xrdb $HOME/.Xresources
+startfluxbox
