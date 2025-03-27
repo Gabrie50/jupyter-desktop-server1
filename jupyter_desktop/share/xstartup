@@ -1,4 +1,4 @@
 #!/bin/sh
 export XDG_SESSION_TYPE=x11
 export DISPLAY=:1
-exec dbus-launch i3
+exec dbus-launch startlxqt
