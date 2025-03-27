@@ -24,11 +24,6 @@ RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}
     rm ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
     ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
-# Garantir que o usuário jovyan e o grupo existam, e corrige permissões
-RUN groupadd -g 1000 jovyan && \
-    useradd -m -u 1000 -g jovyan jovyan && \
-    chown -R jovyan:jovyan /home/jovyan
-
 # Cria a configuração do i3 diretamente (para não precisar configurar na primeira inicialização)
 RUN mkdir -p /home/jovyan/.config/i3 && \
     echo "set \$mod Mod4" > /home/jovyan/.config/i3/config && \
