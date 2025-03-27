@@ -2,7 +2,5 @@ dbus-x11
 xorg 
 x11-xserver-utils 
 xinit 
-wget 
-i3 
+lxqt 
 chromium-browser 
-nano 
