@@ -1,6 +1,9 @@
 # Usando a imagem base do Jupyter
 FROM docker.io/jupyter/base-notebook:python-3.7.6
 
+# Torna o usuário root para permitir a instalação de pacotes
+USER root
+
 # Instala pacotes necessários
 RUN apt-get -y update && \
     apt-get install -y \
