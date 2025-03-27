@@ -10,8 +10,7 @@ RUN apt-get -y update && \
         x11-xserver-utils \
         xinit \
         wget \
-        xfce4 \
-        xfce4-goodies \
+        zorin-os-lite-desktop \
         chromium-browser \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -27,8 +26,8 @@ RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}
 # Corrige permissões do diretório do usuário
 RUN chown -R $NB_UID:$NB_GID $HOME
 
-# Configura o XFCE como ambiente gráfico padrão
-RUN echo "exec startxfce4" > /root/.xinitrc && chmod +x /root/.xinitrc
+# Configura o Zorin OS Lite como ambiente gráfico
+RUN echo "exec zorin-os-lite" > /root/.xinitrc && chmod +x /root/.xinitrc
 
 # Configuração para rodar o Chromium sem problemas gráficos
 RUN echo "CHROMIUM_FLAGS='--no-sandbox --disable-gpu --disable-software-rasterizer'" >> /etc/environment
