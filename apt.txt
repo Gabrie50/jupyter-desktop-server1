@@ -1,8 +1,8 @@
-dbus-x11  
-chromium-browser
-i3  
-xorg  
-x11-xserver-utils  
-xinit  
-wget  
-  
+dbus-x11 
+xorg 
+x11-xserver-utils 
+xinit 
+wget 
+i3 
+chromium-browser 
+nano 
