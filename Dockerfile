@@ -12,6 +12,7 @@ RUN apt-get -y update && \
         wget \
         i3 \
         chromium-browser \
+        feh \  # Instala o feh para definir a imagem de fundo
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -31,6 +32,9 @@ RUN echo "exec i3" > /root/.xinitrc && chmod +x /root/.xinitrc
 
 # Configuração para rodar o Chromium sem problemas gráficos
 RUN echo "CHROMIUM_FLAGS='--no-sandbox --disable-gpu --disable-software-rasterizer'" >> /etc/environment
+
+# Adiciona o arquivo de configuração do i3 para a imagem de fundo
+RUN echo "exec --no-startup-id feh --bg-scale /caminho/para/sua/imagem.jpg" >> /root/.config/i3/config
 
 # Adiciona arquivos extras, se necessário
 ADD . /opt/install
