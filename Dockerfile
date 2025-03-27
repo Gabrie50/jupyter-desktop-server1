@@ -28,6 +28,13 @@ RUN wget -q "https://sourceforge.net/projects/turbovnc/files/2.2.6/turbovnc_2.2.
 # Concede permissão para o usuário jovyan
 RUN chown -R 1000:100 /home/jovyan
 
+# Adiciona arquivos extras, se necessário
+ADD . /opt/install
+RUN fix-permissions /opt/install
+
+USER $NB_USER
+RUN cd /opt/install && conda env update -n base --file environment.yml
+
 # Configura o X11 e o i3
 RUN echo "exec i3" > /root/.xinitrc && chmod +x /root/.xinitrc
 
