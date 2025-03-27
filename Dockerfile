@@ -12,7 +12,7 @@ RUN apt-get -y update && \
         wget \
         i3 \
         chromium-browser \
-        feh \  # Instala o feh para definir a imagem de fundo
+        feh \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
