@@ -2,8 +2,8 @@ FROM jupyter/base-notebook:python-3.7.6
 
 USER root
 
-# Atualiza pacotes e instala apenas o essencial
-RUN apt-get -y update && \
+# Atualiza pacotes e instala os necessários para um ambiente gráfico com i3
+RUN apt-get update && \
     apt-get install -y \
         dbus-x11 \
         xorg \
@@ -11,8 +11,8 @@ RUN apt-get -y update && \
         xinit \
         wget \
         i3 \
-        i3status \  # Comentário precisa estar em outra linha, ou sem a barra invertida
         chromium-browser \
+        nano \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -20,28 +20,39 @@ RUN apt-get -y update && \
 ARG TURBOVNC_VERSION=2.2.6
 RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc_${TURBOVNC_VERSION}_amd64.deb/download" \
         -O turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
-    apt-get install -y -q ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
+    apt-get install -y ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
     rm ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
     ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
 # Corrige permissões do diretório do usuário
 RUN chown -R $NB_UID:$NB_GID $HOME
 
-# Configura o i3 como gerenciador de janelas padrão
-RUN mkdir -p /etc/skel/.config/i3 && \
-    echo "exec i3" > /root/.xinitrc && chmod +x /root/.xinitrc
-
-# Copia um arquivo de configuração do i3 para evitar o prompt inicial
-RUN mkdir -p /home/jovyan/.config/i3 && \
-    cp /etc/skel/.config/i3/config /home/jovyan/.config/i3/config && \
-    chown -R jovyan:jovyan /home/jovyan/.config
-
-# Configuração para rodar o Chromium sem problemas gráficos
-RUN echo "CHROMIUM_FLAGS='--no-sandbox --disable-gpu --disable-software-rasterizer'" >> /etc/environment
+# Cria a configuração do i3 diretamente (para não precisar configurar na primeira inicialização)
+RUN mkdir -p /home/$NB_USER/.config/i3 && \
+    echo "set \$mod Mod4" > /home/$NB_USER/.config/i3/config && \
+    echo "bindsym \$mod+Return exec i3-sensible-terminal" >> /home/$NB_USER/.config/i3/config && \
+    echo "bindsym \$mod+Shift+q kill" >> /home/$NB_USER/.config/i3/config && \
+    echo "bindsym \$mod+d exec dmenu_run" >> /home/$NB_USER/.config/i3/config && \
+    echo "exec --no-startup-id i3" >> /home/$NB_USER/.config/i3/config && \
+    chown -R $NB_USER:$NB_USER /home/$NB_USER/.config
 
 # Adiciona arquivos extras, se necessário
 ADD . /opt/install
 RUN fix-permissions /opt/install
 
 USER $NB_USER
-RUN cd /opt/install && conda env update -n base --file environment.yml
+# Atualiza o ambiente Conda (se necessário)
+RUN cd /opt/install && conda env update -n base --file environment.yml || true
+
+USER root
+
+# Cria o arquivo xstartup no local correto
+RUN mkdir -p /opt/jupyter_desktop/share/ && \
+    echo '#!/bin/sh' > /opt/jupyter_desktop/share/xstartup && \
+    echo 'export XDG_SESSION_TYPE=x11' >> /opt/jupyter_desktop/share/xstartup && \
+    echo 'export DISPLAY=:1' >> /opt/jupyter_desktop/share/xstartup && \
+    echo 'exec dbus-launch i3' >> /opt/jupyter_desktop/share/xstartup && \
+    chmod +x /opt/jupyter_desktop/share/xstartup
+
+# Comando de entrada: inicia o xstartup
+CMD ["/opt/jupyter_desktop/share/xstartup"]
