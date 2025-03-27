@@ -25,22 +25,23 @@ RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}
     ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
 # Corrige permissões do diretório do usuário
-RUN chown -R $NB_UID:$NB_GID $HOME
+RUN usermod -aG sudo jovyan && \
+    chown -R jovyan:jovyan /home/jovyan
 
 # Cria a configuração do i3 diretamente (para não precisar configurar na primeira inicialização)
-RUN mkdir -p /home/$NB_USER/.config/i3 && \
-    echo "set \$mod Mod4" > /home/$NB_USER/.config/i3/config && \
-    echo "bindsym \$mod+Return exec i3-sensible-terminal" >> /home/$NB_USER/.config/i3/config && \
-    echo "bindsym \$mod+Shift+q kill" >> /home/$NB_USER/.config/i3/config && \
-    echo "bindsym \$mod+d exec dmenu_run" >> /home/$NB_USER/.config/i3/config && \
-    echo "exec --no-startup-id i3" >> /home/$NB_USER/.config/i3/config && \
-    chown -R $NB_USER:$NB_USER /home/$NB_USER/.config
+RUN mkdir -p /home/jovyan/.config/i3 && \
+    echo "set \$mod Mod4" > /home/jovyan/.config/i3/config && \
+    echo "bindsym \$mod+Return exec i3-sensible-terminal" >> /home/jovyan/.config/i3/config && \
+    echo "bindsym \$mod+Shift+q kill" >> /home/jovyan/.config/i3/config && \
+    echo "bindsym \$mod+d exec dmenu_run" >> /home/jovyan/.config/i3/config && \
+    echo "exec --no-startup-id i3" >> /home/jovyan/.config/i3/config && \
+    chown -R jovyan:jovyan /home/jovyan/.config
 
 # Adiciona arquivos extras, se necessário
 ADD . /opt/install
 RUN fix-permissions /opt/install
 
-USER $NB_USER
+USER jovyan
 # Atualiza o ambiente Conda (se necessário)
 RUN cd /opt/install && conda env update -n base --file environment.yml || true
 
