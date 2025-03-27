@@ -11,7 +11,7 @@ RUN apt-get -y update && \
         xinit \
         wget \
         i3 \
-        i3status \  # Adiciona o i3status para evitar o erro do status_command
+        i3status \  # Comentário precisa estar em outra linha, ou sem a barra invertida
         chromium-browser \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
