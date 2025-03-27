@@ -11,6 +11,7 @@ RUN apt-get -y update && \
         xinit \
         wget \
         i3 \
+        i3status \  # Adiciona o i3status para evitar o erro do status_command
         chromium-browser \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -26,8 +27,14 @@ RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}
 # Corrige permissões do diretório do usuário
 RUN chown -R $NB_UID:$NB_GID $HOME
 
-# Configura o i3wm como gerenciador de janelas padrão
-RUN echo "exec i3" > /root/.xinitrc && chmod +x /root/.xinitrc
+# Configura o i3 como gerenciador de janelas padrão
+RUN mkdir -p /etc/skel/.config/i3 && \
+    echo "exec i3" > /root/.xinitrc && chmod +x /root/.xinitrc
+
+# Copia um arquivo de configuração do i3 para evitar o prompt inicial
+RUN mkdir -p /home/jovyan/.config/i3 && \
+    cp /etc/skel/.config/i3/config /home/jovyan/.config/i3/config && \
+    chown -R jovyan:jovyan /home/jovyan/.config
 
 # Configuração para rodar o Chromium sem problemas gráficos
 RUN echo "CHROMIUM_FLAGS='--no-sandbox --disable-gpu --disable-software-rasterizer'" >> /etc/environment
