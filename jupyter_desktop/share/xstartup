@@ -5,5 +5,29 @@ export DISPLAY=:1
 # Inicia o sxhkd (gerenciador de atalhos) em segundo plano
 sxhkd &
 
-# Inicia o bspwm via dbus-launch
-exec dbus-launch bspwm
+# Garante que o diretório de configuração do bspwm existe
+mkdir -p ~/.config/bspwm ~/.config/sxhkd
+
+# Se o arquivo bspwmrc não existir, cria um básico
+if [ ! -f ~/.config/bspwm/bspwmrc ]; then
+    cat <<EOF > ~/.config/bspwm/bspwmrc
+#!/bin/sh
+bspc monitor -d 1 2 3 4 5 6 7 8 9 10
+EOF
+    chmod +x ~/.config/bspwm/bspwmrc
+fi
+
+# Se o arquivo sxhkdrc não existir, cria um básico
+if [ ! -f ~/.config/sxhkd/sxhkdrc ]; then
+    cat <<EOF > ~/.config/sxhkd/sxhkdrc
+super + Return
+    x-terminal-emulator
+
+super + q
+    bspc node -c
+EOF
+    chmod +x ~/.config/sxhkd/sxhkdrc
+fi
+
+# Inicia o bspwm corretamente
+exec bspwm
