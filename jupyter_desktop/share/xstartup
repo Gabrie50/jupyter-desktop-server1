@@ -1,4 +1,9 @@
 #!/bin/sh
 export XDG_SESSION_TYPE=x11
 export DISPLAY=:1
-exec dbus-launch zorin-os-lite
+
+# Inicia o sxhkd (gerenciador de atalhos) em segundo plano
+sxhkd &
+
+# Inicia o bspwm via dbus-launch
+exec dbus-launch bspwm
