@@ -10,8 +10,7 @@ RUN apt-get -y update && \
         x11-xserver-utils \
         xinit \
         wget \
-        bspwm \
-        sxhkd \
+        openbox \
         chromium-browser \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -27,8 +26,8 @@ RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}
 # Corrige permissões do diretório do usuário
 RUN chown -R $NB_UID:$NB_GID $HOME
 
-# Configura o bspwm como gerenciador de janelas padrão
-RUN echo "exec bspwm" > /root/.xinitrc && chmod +x /root/.xinitrc
+# Configura o openbox como gerenciador de janelas padrão
+RUN echo "exec openbox" > /root/.xinitrc && chmod +x /root/.xinitrc
 
 # Configuração para rodar o Chromium sem problemas gráficos
 RUN echo "CHROMIUM_FLAGS='--no-sandbox --disable-gpu --disable-software-rasterizer'" >> /etc/environment
