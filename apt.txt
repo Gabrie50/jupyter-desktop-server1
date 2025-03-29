@@ -2,5 +2,7 @@ dbus-x11
 xorg 
 x11-xserver-utils 
 xinit 
-lxqt 
+wget 
+bspwm 
+sxhkd 
 chromium-browser 
