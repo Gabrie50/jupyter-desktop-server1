@@ -2,7 +2,7 @@ FROM jupyter/base-notebook:python-3.7.6
 
 USER root
 
-# Atualiza pacotes e instala apenas o essencial
+# Atualiza pacotes e instala apenas o essencial, incluindo bspwm e sxhkd (para gerenciar atalhos)
 RUN apt-get -y update && \
     apt-get install -y \
         dbus-x11 \
@@ -10,7 +10,8 @@ RUN apt-get -y update && \
         x11-xserver-utils \
         xinit \
         wget \
-        zorin-os-lite-desktop \
+        bspwm \
+        sxhkd \
         chromium-browser \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -26,8 +27,8 @@ RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}
 # Corrige permissões do diretório do usuário
 RUN chown -R $NB_UID:$NB_GID $HOME
 
-# Configura o Zorin OS Lite como ambiente gráfico
-RUN echo "exec zorin-os-lite" > /root/.xinitrc && chmod +x /root/.xinitrc
+# Configura o bspwm como gerenciador de janelas padrão
+RUN echo "exec bspwm" > /root/.xinitrc && chmod +x /root/.xinitrc
 
 # Configuração para rodar o Chromium sem problemas gráficos
 RUN echo "CHROMIUM_FLAGS='--no-sandbox --disable-gpu --disable-software-rasterizer'" >> /etc/environment
