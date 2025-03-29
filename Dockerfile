@@ -2,7 +2,7 @@ FROM jupyter/base-notebook:python-3.7.6
 
 USER root
 
-# Atualiza pacotes e instala apenas o essencial, incluindo bspwm e sxhkd (para gerenciar atalhos)
+# Atualiza pacotes e instala apenas o essencial
 RUN apt-get -y update && \
     apt-get install -y \
         dbus-x11 \
