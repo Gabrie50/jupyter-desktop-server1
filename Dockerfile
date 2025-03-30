@@ -25,6 +25,7 @@ RUN apt-get -y update && \
         lxqt-globalkeys \
         lxqt-notificationd \
         openbox \
+        pcmanfm-qt \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -44,6 +45,11 @@ RUN echo "exec startlxqt" > /root/.xinitrc && chmod +x /root/.xinitrc
 
 # Configuração para rodar o Chromium sem problemas gráficos
 RUN echo "CHROMIUM_FLAGS='--no-sandbox --disable-gpu --disable-software-rasterizer'" >> /etc/environment
+
+# Configuração do PCManFM para gerenciar a área de trabalho
+RUN mkdir -p /root/.config/pcmanfm-qt/default/ && \
+    echo "[Configuration]" > /root/.config/pcmanfm-qt/default/pcmanfm-qt.conf && \
+    echo "desktop=1" >> /root/.config/pcmanfm-qt/default/pcmanfm-qt.conf
 
 # Adiciona arquivos extras, se necessário
 ADD . /opt/install
