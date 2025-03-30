@@ -24,6 +24,7 @@ RUN apt-get -y update && \
         lxqt-themes \
         lxqt-globalkeys \
         lxqt-notificationd \
+        openbox \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
