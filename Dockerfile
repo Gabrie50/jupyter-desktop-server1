@@ -12,18 +12,13 @@ RUN apt-get -y update && \
         wget \
         software-properties-common \
         chromium-browser \
-    --no-install-recommends && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Adiciona repositórios e instala o LXQt 5
-RUN add-apt-repository ppa:lxqt-team/ppa && \
-    apt-get update && \
-    apt-get install -y \
-        lxqt \
+        build-essential \
+        cmake \
+        qt5-qmake \
+        qtbase5-dev \
+        qtchooser \
+        qtbase5-dev-tools \
         lxqt-common \
-        lxqt-panel \
-        lxqt-session \
-        lxqt-config \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
