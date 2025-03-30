@@ -18,7 +18,12 @@ RUN apt-get -y update && \
         qtbase5-dev \
         qtchooser \
         qtbase5-dev-tools \
-        lxqt-common \
+        lxqt-session \
+        lxqt-panel \
+        lxqt-config \
+        lxqt-themes \
+        lxqt-globalkeys \
+        lxqt-notificationd \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
