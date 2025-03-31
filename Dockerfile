@@ -5,7 +5,7 @@ USER root
 # Atualiza pacotes e instala apenas o essencial
 RUN pacman -Syu --noconfirm && \
     pacman -S --noconfirm \
-        dbus-x11 \
+        dbus \  # Substituído dbus-x11 por dbus
         xorg-server \
         xorg-xinit \
         xorg-xrandr \
