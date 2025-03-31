@@ -2,7 +2,7 @@ FROM jupyter/base-notebook:python-3.7.6
 
 USER root
 
-# Atualiza pacotes e instala dependências essenciais
+# Atualiza pacotes e instala apenas o essencial
 RUN apt-get -y update && \
     apt-get install -y \
         dbus-x11 \
@@ -10,18 +10,8 @@ RUN apt-get -y update && \
         x11-xserver-utils \
         xinit \
         wget \
-        software-properties-common \
+        openbox \
         chromium-browser \
-        build-essential \
-        cmake \
-        qt5-qmake \
-        qtbase5-dev \
-        qtchooser \
-        qtbase5-dev-tools \
-        kde-plasma-desktop \
-        sddm \
-        dolphin \
-        konsole \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -36,8 +26,8 @@ RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}
 # Corrige permissões do diretório do usuário
 RUN chown -R $NB_UID:$NB_GID $HOME
 
-# Configura o KDE Plasma como gerenciador de janelas padrão
-RUN echo "exec startplasma-x11" > /root/.xinitrc && chmod +x /root/.xinitrc
+# Configura o Openbox como gerenciador de janelas padrão
+RUN echo "exec openbox-session" > /root/.xinitrc && chmod +x /root/.xinitrc
 
 # Configuração para rodar o Chromium sem problemas gráficos
 RUN echo "CHROMIUM_FLAGS='--no-sandbox --disable-gpu --disable-software-rasterizer'" >> /etc/environment
