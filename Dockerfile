@@ -1,25 +1,25 @@
-FROM jupyter/base-notebook:python-3.8
+FROM blackarchlinux/blackarch:latest
 
 USER root
 
 # Atualiza pacotes e instala apenas o essencial
-RUN apt-get -y update && \
-    apt-get install -y \
+RUN pacman -Syu --noconfirm && \
+    pacman -S --noconfirm \
         dbus-x11 \
-        xorg \
-        x11-xserver-utils \
-        xinit \
-        wget \
+        xorg-server \
+        xorg-xinit \
+        xorg-xrandr \
+        xorg-xset \
         openbox \
-        chromium-browser \
-    --no-install-recommends && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+        chromium \
+        wget \
+    && pacman -Scc --noconfirm
 
 # Instala o TurboVNC
 ARG TURBOVNC_VERSION=2.2.6
 RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc_${TURBOVNC_VERSION}_amd64.deb/download" \
         -O turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
-    apt-get install -y -q ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
+    pacman -U --noconfirm ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
     rm ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
     ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
