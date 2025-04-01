@@ -1,4 +1,16 @@
 #!/bin/sh
+
 export XDG_SESSION_TYPE=x11
 export DISPLAY=:1
-exec dbus-launch openbox-session
+
+# Inicia o D-Bus (se necessário)
+if command -v dbus-launch >/dev/null 2>&1; then
+    eval "$(dbus-launch --sh-syntax --exit-with-session)"
+fi
+
+# Garante que o diretório de logs exista
+mkdir -p ~/.vnc
+touch ~/.vnc/xstartup.log
+
+# Inicia o Openbox
+exec openbox-session >> ~/.vnc/xstartup.log 2>&1
