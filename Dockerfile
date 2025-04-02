@@ -1,8 +1,6 @@
 FROM jupyter/base-notebook:python-3.9
 
-USER root
-
-# 1. Instala dependências básicas e X11
+# 1. Atualiza o sistema e instala pacotes necessários
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         dbus-x11 \
@@ -18,53 +16,22 @@ RUN apt-get update -y && \
         pavucontrol \
         network-manager \
         net-tools \
-        ca-certificates \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+        ca-certificates && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 2. Instala IceWM + temas
+# 2. Instala o IceWM
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         icewm \
         icewm-common && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 3. Baixa temas adicionais do IceWM
+# 3. Baixa e instala os temas do IceWM sem necessidade de autenticação
 RUN rm -rf /usr/share/icewm/themes && \
-    git clone https://github.com/ice-wm/icewm-themes.git /usr/share/icewm/themes
+    wget -qO- https://github.com/ice-wm/icewm-themes/archive/refs/heads/master.tar.gz | tar -xz -C /usr/share/icewm/ && \
+    mv /usr/share/icewm/icewm-themes-master /usr/share/icewm/themes
 
-# 4. Configuração padrão do IceWM
-RUN mkdir -p /etc/skel/.icewm && \
-    echo "Theme=\"win95/default.theme\"" > /etc/skel/.icewm/theme && \
-    echo "TaskBarClockLeds=1" > /etc/skel/.icewm/preferences && \
-    echo "ShowProgramsMenu=1" >> /etc/skel/.icewm/preferences
+# 4. Configuração padrão do IceWM (adicione comandos extras se necessário)
+# COPY arquivos_de_config /usr/share/icewm/
 
-# 5. Instala TurboVNC
-ARG TURBOVNC_VERSION=2.2.6
-RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc_${TURBOVNC_VERSION}_amd64.deb" -O turbovnc.deb && \
-    apt-get install -y -q ./turbovnc.deb && \
-    rm ./turbovnc.deb && \
-    ln -s /opt/TurboVNC/bin/* /usr/local/bin/
-
-# 6. Instala Chromium
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
-        chromium-browser \
-        chromium-codecs-ffmpeg-extra \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# 7. Configurações finais
-RUN echo "CHROMIUM_FLAGS='--no-sandbox --disable-gpu --disable-software-rasterizer'" >> /etc/environment && \
-    echo "exec icewm-session" > /etc/skel/.xinitrc && \
-    chmod +x /etc/skel/.xinitrc
-
-# 8. Corrige permissões
-RUN chown -R $NB_UID:$NB_GID /home/$NB_USER && \
-    fix-permissions /home/$NB_USER
-
-USER $NB_USER
-
-# 9. (Opcional) Configuração de ambiente conda
-COPY environment.yml /tmp/
-RUN conda env update -n base --file /tmp/environment.yml && \
-    rm /tmp/environment.yml
-    
+CMD ["icewm"]
