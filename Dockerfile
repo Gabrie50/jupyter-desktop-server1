@@ -1,51 +1,66 @@
-FROM blackarchlinux/blackarch:latest
+FROM jupyter/base-notebook:python-3.7.6
 
-# Define o usuário root para instalação de pacotes
 USER root
 
-# Atualiza pacotes essenciais
-RUN pacman -Syu --noconfirm && \
-    pacman -S --noconfirm \
-        dbus \
-        xorg-server \
-        xorg-xinit \
-        xorg-xrandr \
-        xorg-xset \
-        openbox \
-        chromium \
+# 1. Instala dependências básicas e X11
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        dbus-x11 \
+        xorg \
+        x11-xserver-utils \
+        xinit \
         wget \
-        sudo \
-    && pacman -Scc --noconfirm
+        git \
+        mesa-utils \
+        libgl1-mesa-dri \
+        fonts-dejavu \
+        pulseaudio \
+        pavucontrol \
+        network-manager \
+        net-tools \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Criação do usuário NB_USER (Jupyter padrão)
-ARG NB_USER=jovyan
-ARG NB_UID=1000
-ARG NB_GID=1000
+# 2. Instala IceWM 1.6 (versão mais recente)
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        icewm \
+        icewm-themes \
+        icewm-utils \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN groupadd --gid $NB_GID $NB_USER && \
-    useradd --uid $NB_UID --gid $NB_GID -m -s /bin/bash $NB_USER && \
-    echo "$NB_USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$NB_USER
+# 3. Configuração do IceWM (tema e preferências)
+RUN mkdir -p /etc/skel/.icewm && \
+    echo "Theme=\"SilverXP/default.theme\"" > /etc/skel/.icewm/theme && \
+    echo "TaskBarClockLeds=1" > /etc/skel/.icewm/preferences && \
+    echo "ShowProgramsMenu=1" >> /etc/skel/.icewm/preferences
 
-# Instalação do TurboVNC corretamente
-RUN wget -q "https://sourceforge.net/projects/turbovnc/files/2.2.6/turbovnc-2.2.6.x86_64.tar.gz" -O turbovnc.tar.gz && \
-    tar -xzf turbovnc.tar.gz -C /opt && \
-    ln -s /opt/TurboVNC/bin/* /usr/local/bin/ && \
-    rm turbovnc.tar.gz
+# 4. Instala TurboVNC (última versão estável)
+ARG TURBOVNC_VERSION=2.2.6
+RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc_${TURBOVNC_VERSION}_amd64.deb/download" \
+        -O turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
+    apt-get install -y -q ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
+    rm ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
+    ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
-# Configuração do Openbox como gerenciador de janelas padrão
-RUN echo "exec openbox-session" > /root/.xinitrc && chmod +x /root/.xinitrc
+# 5. Instala Chromium com suporte a GPU (opcional)
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        chromium-browser \
+        chromium-codecs-ffmpeg-extra \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Configuração para rodar o Chromium corretamente
-RUN echo "CHROMIUM_FLAGS='--no-sandbox --disable-gpu --disable-software-rasterizer'" >> /etc/environment
+# 6. Configurações de ambiente
+RUN echo "CHROMIUM_FLAGS='--no-sandbox --disable-gpu --disable-software-rasterizer'" >> /etc/environment && \
+    echo "exec icewm-session" > /etc/skel/.xinitrc && \
+    chmod +x /etc/skel/.xinitrc
 
-# Adiciona arquivos extras, se necessário
-ADD . /opt/install
-RUN chown -R $NB_UID:$NB_GID /opt/install
+# 7. Configura permissões e usuário
+RUN chown -R $NB_UID:$NB_GID /home/$NB_USER && \
+    fix-permissions /home/$NB_USER
 
-# Muda para o usuário NB_USER
 USER $NB_USER
 
-# Atualiza e configura o Conda
-RUN cd /opt/install && conda env update -n base --file environment.yml
-
-CMD ["openbox-session"]
+# 8. (Opcional) Instalação de pacotes adicionais via conda
+COPY environment.yml /tmp/
+RUN conda env update -n base --file /tmp/environment.yml && \
+    rm /tmp/environment.yml
