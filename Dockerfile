@@ -21,14 +21,14 @@ RUN apt-get update -y && \
         ca-certificates \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 2. Instala IceWM + temas (versão mais recente disponível)
+# 2. Instala IceWM + temas
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         icewm \
-        icewm-common \  # Pacote que substitui icewm-themes/icewm-utils
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+        icewm-common && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 3. Baixa temas adicionais do IceWM diretamente do GitHub
+# 3. Baixa temas adicionais do IceWM
 RUN wget https://github.com/ice-wm/icewm-themes/archive/refs/heads/master.tar.gz -O /tmp/icewm-themes.tar.gz && \
     tar -xzf /tmp/icewm-themes.tar.gz -C /usr/share/icewm/themes/ --strip-components=1 && \
     rm /tmp/icewm-themes.tar.gz
@@ -39,7 +39,7 @@ RUN mkdir -p /etc/skel/.icewm && \
     echo "TaskBarClockLeds=1" > /etc/skel/.icewm/preferences && \
     echo "ShowProgramsMenu=1" >> /etc/skel/.icewm/preferences
 
-# 5. Instala TurboVNC (última versão estável)
+# 5. Instala TurboVNC
 ARG TURBOVNC_VERSION=2.2.6
 RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc_${TURBOVNC_VERSION}_amd64.deb" -O turbovnc.deb && \
     apt-get install -y -q ./turbovnc.deb && \
