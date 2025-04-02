@@ -29,9 +29,7 @@ RUN apt-get update -y && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # 3. Baixa temas adicionais do IceWM
-RUN wget https://github.com/ice-wm/icewm-themes/archive/refs/heads/master.tar.gz -O /tmp/icewm-themes.tar.gz && \
-    tar -xzf /tmp/icewm-themes.tar.gz -C /usr/share/icewm/themes/ --strip-components=1 && \
-    rm /tmp/icewm-themes.tar.gz
+RUN git clone https://github.com/ice-wm/icewm-themes.git /usr/share/icewm/themes/
 
 # 4. Configuração padrão do IceWM
 RUN mkdir -p /etc/skel/.icewm && \
@@ -68,3 +66,4 @@ USER $NB_USER
 COPY environment.yml /tmp/
 RUN conda env update -n base --file /tmp/environment.yml && \
     rm /tmp/environment.yml
+    
