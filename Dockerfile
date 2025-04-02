@@ -29,7 +29,8 @@ RUN apt-get update -y && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # 3. Baixa temas adicionais do IceWM
-RUN git clone https://github.com/ice-wm/icewm-themes.git /usr/share/icewm/themes/
+RUN rm -rf /usr/share/icewm/themes && \
+    git clone https://github.com/ice-wm/icewm-themes.git /usr/share/icewm/themes
 
 # 4. Configuração padrão do IceWM
 RUN mkdir -p /etc/skel/.icewm && \
