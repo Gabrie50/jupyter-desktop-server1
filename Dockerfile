@@ -33,8 +33,10 @@ RUN apt-get -y update && \
         autopoint \
         libsm-dev \
         libice-dev \
-        libfribidi-dev && \
-    apt-get install --no-install-recommends -y && \
+        libfribidi-dev \
+        markdown \
+        asciidoctor \
+    --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
     
 # Instalação do IceWM 3.5 diretamente do código-fonte
