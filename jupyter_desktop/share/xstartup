@@ -1,7 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 export XDG_SESSION_TYPE=x11
 export DISPLAY=:1
-export PULSE_SERVER=unix:/tmp/pulseaudio.socket
-
-# Inicia o IceWM com suporte a DBus e áudio
-exec dbus-launch --exit-with-session icewm-session
+exec dbus-launch icewm-session
