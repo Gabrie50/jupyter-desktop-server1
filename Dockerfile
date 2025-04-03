@@ -35,17 +35,17 @@ RUN apk update && apk add --no-cache \
     markdown \
     asciidoctor
 
-# Instalação do IceWM 3.5 diretamente do código-fonte
+# Instalação do IceWM 3.5 diretamente do código-fonte com correção para libintl
 WORKDIR /usr/local/src
 RUN git clone --depth 1 --branch 3.5.0 https://github.com/ice-wm/icewm.git && \
     cd icewm && \
     autoreconf -i && \
-    ./configure && \
+    ./configure LDFLAGS="-lintl" && \
     make -j$(nproc) && \
     make install && \
     cd .. && rm -rf icewm
 
-# Instala o TurboVNC
+# Instala o TurboVNC (usando o tar.gz, pois Alpine não utiliza .deb)
 ARG TURBOVNC_VERSION=2.2.6
 RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc.x86_64.tar.gz/download" \
         -O turbovnc.tar.gz && \
@@ -53,7 +53,7 @@ RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}
     rm turbovnc.tar.gz && \
     ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
-# Configuração do IceWM
+# Configura o IceWM como gerenciador de janelas padrão
 RUN echo "exec icewm-session" > /root/.xinitrc && chmod +x /root/.xinitrc
 
 # Configuração para rodar o Chromium sem problemas gráficos
@@ -62,6 +62,7 @@ RUN echo "CHROMIUM_FLAGS='--no-sandbox --disable-gpu --disable-software-rasteriz
 # Adiciona arquivos extras, se necessário
 ADD . /opt/install
 
+# Usuário padrão para o ambiente (ajuste conforme necessário)
 USER 1000
 
 RUN cd /opt/install && conda env update -n base --file environment.yml
