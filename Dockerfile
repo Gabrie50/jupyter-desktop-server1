@@ -31,9 +31,11 @@ RUN apt-get -y update && \
         pkg-config \
         gettext \
         autopoint \
+        libsm-dev \
+        libice-dev \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
-    
+
 # Instalação do IceWM 3.5 diretamente do código-fonte
 WORKDIR /usr/local/src
 RUN git clone --depth 1 --branch 3.5.0 https://github.com/ice-wm/icewm.git && \
