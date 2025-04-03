@@ -1,4 +1,4 @@
-FROM jupyter/base-notebook:python-3.9
+FROM jupyter/base-notebook:python-3.7.6
 
 USER root
 
@@ -10,10 +10,33 @@ RUN apt-get -y update && \
         x11-xserver-utils \
         xinit \
         wget \
-        icewm \
         chromium-browser \
+        build-essential \
+        libx11-dev \
+        libxext-dev \
+        libxrandr-dev \
+        libxinerama-dev \
+        libxft-dev \
+        libimlib2-dev \
+        libpng-dev \
+        libjpeg-dev \
+        libxpm-dev \
+        libxcomposite-dev \
+        libxdamage-dev \
+        libxrender-dev \
+        git \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Instalação do IceWM 3.5 diretamente do código-fonte
+WORKDIR /usr/local/src
+RUN git clone --depth 1 --branch 3.5.0 https://github.com/ice-wm/icewm.git && \
+    cd icewm && \
+    ./autogen.sh && \
+    ./configure && \
+    make -j$(nproc) && \
+    make install && \
+    cd .. && rm -rf icewm
 
 # Instala o TurboVNC
 ARG TURBOVNC_VERSION=2.2.6
