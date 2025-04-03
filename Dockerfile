@@ -1,68 +1,34 @@
-FROM alpine:latest
+FROM jupyter/base-notebook:python-3.9
 
 USER root
 
-# Atualiza pacotes e instala dependências essenciais
-RUN apk update && apk add --no-cache \
+# Atualiza os pacotes e instala dependências necessárias
+RUN apt-get -y update && apt-get install -y \
     dbus-x11 \
-    xorg-server \
-    xinit \
-    wget \
-    chromium \
-    build-base \
-    libx11-dev \
-    libxext-dev \
-    libxrandr-dev \
-    libxinerama-dev \
-    libxft-dev \
-    imlib2-dev \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    libxpm-dev \
-    libxcomposite-dev \
-    libxdamage-dev \
-    libxrender-dev \
-    git \
-    autoconf \
-    automake \
-    libtool \
-    pkgconf \
-    gettext \
-    gettext-dev \
-    libsm-dev \
-    libice-dev \
-    fribidi-dev \
-    markdown \
-    asciidoctor
+    firefox \
+    kde-plasma-desktop \
+    kwin-x11 \
+    sddm \
+    xorg \
+    x11-xserver-utils \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Instalação do IceWM 3.5 diretamente do código-fonte com correção para libintl
-WORKDIR /usr/local/src
-RUN git clone --depth 1 --branch 3.5.0 https://github.com/ice-wm/icewm.git && \
-    cd icewm && \
-    autoreconf -i && \
-    ./configure LDFLAGS="-lintl" && \
-    make -j$(nproc) && \
-    make install && \
-    cd .. && rm -rf icewm
-
-# Instala o TurboVNC (usando o tar.gz, pois Alpine não utiliza .deb)
+# Remove light-locker para evitar bloqueios de tela
 ARG TURBOVNC_VERSION=2.2.6
-RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc.x86_64.tar.gz/download" \
-        -O turbovnc.tar.gz && \
-    tar -xzf turbovnc.tar.gz -C /opt/ && \
-    rm turbovnc.tar.gz && \
+RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc_${TURBOVNC_VERSION}_amd64.deb/download" -O turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
+    apt-get install -y -q ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
+    apt-get remove -y -q light-locker && \
+    rm ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
     ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
-# Configura o IceWM como gerenciador de janelas padrão
-RUN echo "exec icewm-session" > /root/.xinitrc && chmod +x /root/.xinitrc
+# Corrige permissões para o usuário do notebook
+RUN chown -R $NB_UID:$NB_GID $HOME
 
-# Configuração para rodar o Chromium sem problemas gráficos
-RUN echo "CHROMIUM_FLAGS='--no-sandbox --disable-gpu --disable-software-rasterizer'" >> /etc/environment
-
-# Adiciona arquivos extras, se necessário
 ADD . /opt/install
+RUN fix-permissions /opt/install
 
-# Usuário padrão para o ambiente (ajuste conforme necessário)
-USER 1000
-
-RUN cd /opt/install && conda env update -n base --file environment.yml
+USER $NB_USER
+RUN cd /opt/install && \
+    conda env update -n base --file environment.yml
+    
