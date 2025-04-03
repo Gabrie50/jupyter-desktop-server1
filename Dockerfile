@@ -2,7 +2,7 @@ FROM alpine:latest
 
 USER root
 
-# Atualiza pacotes e instala apenas o essencial
+# Atualiza pacotes e instala dependências essenciais
 RUN apk update && apk add --no-cache \
     dbus-x11 \
     xorg-server \
@@ -28,17 +28,18 @@ RUN apk update && apk add --no-cache \
     libtool \
     pkgconf \
     gettext \
+    gettext-dev \
     libsm-dev \
     libice-dev \
     fribidi-dev \
     markdown \
-    asciidoctor 
+    asciidoctor
 
 # Instalação do IceWM 3.5 diretamente do código-fonte
 WORKDIR /usr/local/src
 RUN git clone --depth 1 --branch 3.5.0 https://github.com/ice-wm/icewm.git && \
     cd icewm && \
-    ./autogen.sh && \
+    autoreconf -i && \
     ./configure && \
     make -j$(nproc) && \
     make install && \
@@ -52,10 +53,7 @@ RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}
     rm turbovnc.tar.gz && \
     ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
-# Corrige permissões do diretório do usuário
-RUN chown -R 1000:1000 /home
-
-# Configura o IceWM como gerenciador de janelas padrão
+# Configuração do IceWM
 RUN echo "exec icewm-session" > /root/.xinitrc && chmod +x /root/.xinitrc
 
 # Configuração para rodar o Chromium sem problemas gráficos
