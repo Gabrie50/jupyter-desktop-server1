@@ -1,44 +1,39 @@
-FROM jupyter/base-notebook:python-3.7.6
+FROM alpine:latest
 
 USER root
 
 # Atualiza pacotes e instala apenas o essencial
-RUN apt-get -y update && \
-    apt-get install -y \
-        dbus-x11 \
-        xorg \
-        x11-xserver-utils \
-        xinit \
-        wget \
-        chromium-browser \
-        build-essential \
-        libx11-dev \
-        libxext-dev \
-        libxrandr-dev \
-        libxinerama-dev \
-        libxft-dev \
-        libimlib2-dev \
-        libpng-dev \
-        libjpeg-dev \
-        libxpm-dev \
-        libxcomposite-dev \
-        libxdamage-dev \
-        libxrender-dev \
-        git \
-        autoconf \
-        automake \
-        libtool \
-        pkg-config \
-        gettext \
-        autopoint \
-        libsm-dev \
-        libice-dev \
-        libfribidi-dev \
-        markdown \
-        asciidoctor \
-    --no-install-recommends && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-    
+RUN apk update && apk add --no-cache \
+    dbus-x11 \
+    xorg-server \
+    xinit \
+    wget \
+    chromium \
+    build-base \
+    libx11-dev \
+    libxext-dev \
+    libxrandr-dev \
+    libxinerama-dev \
+    libxft-dev \
+    imlib2-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    libxpm-dev \
+    libxcomposite-dev \
+    libxdamage-dev \
+    libxrender-dev \
+    git \
+    autoconf \
+    automake \
+    libtool \
+    pkgconf \
+    gettext \
+    libsm-dev \
+    libice-dev \
+    fribidi-dev \
+    markdown \
+    asciidoctor 
+
 # Instalação do IceWM 3.5 diretamente do código-fonte
 WORKDIR /usr/local/src
 RUN git clone --depth 1 --branch 3.5.0 https://github.com/ice-wm/icewm.git && \
@@ -51,14 +46,14 @@ RUN git clone --depth 1 --branch 3.5.0 https://github.com/ice-wm/icewm.git && \
 
 # Instala o TurboVNC
 ARG TURBOVNC_VERSION=2.2.6
-RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc_${TURBOVNC_VERSION}_amd64.deb/download" \
-        -O turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
-    apt-get install -y -q ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
-    rm ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
+RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc.x86_64.tar.gz/download" \
+        -O turbovnc.tar.gz && \
+    tar -xzf turbovnc.tar.gz -C /opt/ && \
+    rm turbovnc.tar.gz && \
     ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
 # Corrige permissões do diretório do usuário
-RUN chown -R $NB_UID:$NB_GID $HOME
+RUN chown -R 1000:1000 /home
 
 # Configura o IceWM como gerenciador de janelas padrão
 RUN echo "exec icewm-session" > /root/.xinitrc && chmod +x /root/.xinitrc
@@ -68,8 +63,7 @@ RUN echo "CHROMIUM_FLAGS='--no-sandbox --disable-gpu --disable-software-rasteriz
 
 # Adiciona arquivos extras, se necessário
 ADD . /opt/install
-RUN fix-permissions /opt/install
 
-USER $NB_USER
+USER 1000
 
 RUN cd /opt/install && conda env update -n base --file environment.yml
