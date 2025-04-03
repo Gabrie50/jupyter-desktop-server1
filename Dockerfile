@@ -1,4 +1,4 @@
-FROM jupyter/base-notebook:python-3.9
+FROM jupyter/base-notebook:python-3.7.6
 
 USER root
 
@@ -14,11 +14,10 @@ RUN apt-get -y update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Remove light-locker para evitar bloqueios de tela
+# Instala o TurboVNC sem tentar remover o light-locker
 ARG TURBOVNC_VERSION=2.2.6
 RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc_${TURBOVNC_VERSION}_amd64.deb/download" -O turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
     apt-get install -y -q ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
-    apt-get remove -y -q light-locker && \
     rm ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
     ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
