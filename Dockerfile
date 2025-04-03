@@ -1,37 +1,40 @@
 FROM jupyter/base-notebook:python-3.9
 
-# 1. Atualiza o sistema e instala pacotes necessários
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+USER root
+
+# Atualiza pacotes e instala apenas o essencial
+RUN apt-get -y update && \
+    apt-get install -y \
         dbus-x11 \
         xorg \
         x11-xserver-utils \
         xinit \
         wget \
-        git \
-        mesa-utils \
-        libgl1-mesa-dri \
-        fonts-dejavu \
-        pulseaudio \
-        pavucontrol \
-        network-manager \
-        net-tools \
-        ca-certificates && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# 2. Instala o IceWM
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
         icewm \
-        icewm-common && \
+        chromium-browser \
+    --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 3. Baixa e instala os temas do IceWM sem necessidade de autenticação
-RUN rm -rf /usr/share/icewm/themes && \
-    wget -qO- https://github.com/ice-wm/icewm-themes/archive/refs/heads/master.tar.gz | tar -xz -C /usr/share/icewm/ && \
-    mv /usr/share/icewm/icewm-themes-master /usr/share/icewm/themes
+# Instala o TurboVNC
+ARG TURBOVNC_VERSION=2.2.6
+RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc_${TURBOVNC_VERSION}_amd64.deb/download" \
+        -O turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
+    apt-get install -y -q ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
+    rm ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
+    ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
-# 4. Configuração padrão do IceWM (adicione comandos extras se necessário)
-# COPY arquivos_de_config /usr/share/icewm/
+# Corrige permissões do diretório do usuário
+RUN chown -R $NB_UID:$NB_GID $HOME
 
-CMD ["icewm"]
+# Configura o IceWM como gerenciador de janelas padrão
+RUN echo "exec icewm-session" > /root/.xinitrc && chmod +x /root/.xinitrc
+
+# Configuração para rodar o Chromium sem problemas gráficos
+RUN echo "CHROMIUM_FLAGS='--no-sandbox --disable-gpu --disable-software-rasterizer'" >> /etc/environment
+
+# Adiciona arquivos extras, se necessário
+ADD . /opt/install
+RUN fix-permissions /opt/install
+
+USER $NB_USER
+RUN cd /opt/install && conda env update -n base --file environment.yml
