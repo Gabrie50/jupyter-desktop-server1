@@ -33,10 +33,10 @@ RUN apt-get -y update && \
         autopoint \
         libsm-dev \
         libice-dev \
-        libfribidi-dev \  # Adicionado aqui
-    --no-install-recommends && \
+        libfribidi-dev && \
+    apt-get install --no-install-recommends -y && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
-
+    
 # Instalação do IceWM 3.5 diretamente do código-fonte
 WORKDIR /usr/local/src
 RUN git clone --depth 1 --branch 3.5.0 https://github.com/ice-wm/icewm.git && \
