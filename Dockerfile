@@ -6,12 +6,12 @@ USER root
 RUN apt-get -y update && apt-get install -y \
     dbus-x11 \
     firefox \
-    kde-standard \  # mais completo que kde-plasma-desktop
+    kde-standard \
     kwin-x11 \
     sddm \
     xorg \
     x11-xserver-utils \
-    && apt-get clean && rm -rf /var/lib/apt/lists\*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Instala o TurboVNC
 ARG TURBOVNC_VERSION=2.2.6
