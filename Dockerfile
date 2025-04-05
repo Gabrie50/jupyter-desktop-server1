@@ -13,7 +13,6 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
     git \
-    cmake \
     meson \
     ninja-build \
     libxcb1-dev \
@@ -42,12 +41,15 @@ RUN apt-get update && apt-get install -y \
     dbus-x11 \
     xauth \
     libgtk-3-dev \
-    python3-pip
+    python3-pip \
+    lsb-release \
+    gnupg \
+    ca-certificates \
+    libunwind-dev
 
-
-# Instala clang 19 com suporte a <format>
-RUN apt-get update && apt-get install -y wget software-properties-common && \
-    bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)" 19 && \
+# Instala clang 19 com suporte a <format> e libc++
+RUN bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)" 19 && \
+    apt-get install -y clang-19 libc++-19-dev libc++abi-19-dev && \
     ln -sf /usr/bin/clang-19 /usr/bin/clang && \
     ln -sf /usr/bin/clang++-19 /usr/bin/clang++
 
@@ -61,30 +63,32 @@ RUN apt-get remove -y cmake && \
 # Instala hyprlang
 RUN git clone --depth 1 --branch v0.3.2 https://github.com/hyprwm/hyprlang.git /opt/hyprlang && \
     cd /opt/hyprlang && \
-    cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-19 -DCMAKE_CXX_COMPILER=clang++-19 \
-        -DCMAKE_CXX_FLAGS="-stdlib=libc++" -DCMAKE_EXE_LINKER_FLAGS="-stdlib=libc++" && \
-    cmake --build build -j$(nproc) && \
+    cmake -B build -G Ninja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_C_COMPILER=clang-19 \
+        -DCMAKE_CXX_COMPILER=clang++-19 \
+        -DCMAKE_CXX_FLAGS="-stdlib=libc++" \
+        -DCMAKE_EXE_LINKER_FLAGS="-stdlib=libc++" && \
+    cmake --build build && \
     cmake --install build && \
     rm -rf /opt/hyprlang
-    
 
 # Instala hyprcursor
 RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor && \
     cd /opt/hyprcursor && \
-    cmake -B build -DCMAKE_BUILD_TYPE=Release && \
-    cmake --build build -j$(nproc) && \
+    cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release && \
+    cmake --build build && \
     cmake --install build && \
     rm -rf /opt/hyprcursor
 
 # Compila e instala o Hyprland
 RUN git clone --recursive -b v0.39.1 https://github.com/hyprwm/Hyprland.git /opt/Hyprland && \
     cd /opt/Hyprland && \
-    cmake -B build -DCMAKE_BUILD_TYPE=Release && \
-    cmake --build build -j$(nproc) && \
+    cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release && \
+    cmake --build build && \
     cmake --install build && \
     rm -rf /opt/Hyprland
-    
-    
+
 # Compila e instala o foot terminal
 RUN git clone https://codeberg.org/dnkl/foot.git /opt/foot && \
     cd /opt/foot && \
