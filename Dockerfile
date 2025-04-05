@@ -18,10 +18,13 @@ RUN apt-get -y update && apt-get install -y \
     libevdev-dev \
     libxcb-xfixes0-dev
 
-# Copiar arquivos do diretório Hyprland_Wayland para o container
-COPY Hyprland_Wayland/Hyprland /opt/Hyprland
-COPY Hyprland_Wayland/foot /opt/foot
-COPY Hyprland_Wayland/eww /opt/eww
+# Clonar o repositório com os arquivos Hyprland, foot e eww
+RUN git clone https://github.com/Gabrie50/jupyter-desktop-server1.git /opt/jupyter-desktop-server1
+
+# Copiar os arquivos Hyprland, foot e eww para o diretório adequado no container
+COPY /opt/jupyter-desktop-server1/Hyprland\ \(Wayland\)/Hyprland /opt/Hyprland
+COPY /opt/jupyter-desktop-server1/Hyprland\ \(Wayland\)/foot /opt/foot
+COPY /opt/jupyter-desktop-server1/Hyprland\ \(Wayland\)/eww /opt/eww
 
 # Instalar o Hyprland
 RUN cd /opt/Hyprland && make install
