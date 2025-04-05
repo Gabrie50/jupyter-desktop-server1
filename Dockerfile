@@ -71,7 +71,7 @@ RUN git clone --depth 1 --branch v0.4.2 https://github.com/hyprwm/hyprlang.git /
     
 # 7) Instalar toml++ e hyprcursor (sem alterar o CMakeLists.txt)
 
-# 7.1) Dependências de compilação + dev de libzip, cairo e librsvg
+# 7.1) Dependências de compilação + libs de dev necessárias
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         git cmake ninja-build pkg-config build-essential \
@@ -83,21 +83,21 @@ RUN git clone --depth 1 https://github.com/marzer/tomlplusplus.git /opt/tomlplus
     mkdir -p /usr/local/include/toml++ && \
     cp -r /opt/tomlplusplus/include/toml++ /usr/local/include/ && \
     mkdir -p /usr/local/lib/pkgconfig && \
-    cat << 'EOF' > /usr/local/lib/pkgconfig/tomlplusplus.pc
+    tee /usr/local/lib/pkgconfig/tomlplusplus.pc << 'EOF'
 prefix=/usr/local
-exec_prefix=\${prefix}
-includedir=\${prefix}/include
+exec_prefix=${prefix}
+includedir=${prefix}/include
 
 Name: tomlplusplus
 Description: Header-only TOML parser library
 Version: 3.2.4
 Requires:
 Libs:
-Cflags: -I\${includedir}
-EOF && \
+Cflags: -I${includedir}
+EOF
     rm -rf /opt/tomlplusplus
 
-# 7.3) Clonar, compilar e instalar o hyprcursor
+# 7.3) Clonar, compilar e instalar hyprcursor
 RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor && \
     sed -i '/add_subdirectory(hyprcursor-util)/d' /opt/hyprcursor/CMakeLists.txt && \
     cmake -S /opt/hyprcursor -B /opt/hyprcursor/build -G Ninja \
@@ -107,6 +107,7 @@ RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor
     cmake --build /opt/hyprcursor/build && \
     cmake --install /opt/hyprcursor/build && \
     rm -rf /opt/hyprcursor
+    
     
 
 
@@ -130,7 +131,7 @@ RUN git clone https://github.com/elkowar/eww.git /opt/eww && \
 ARG TURBOVNC_VERSION=2.2.6
 RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc_${TURBOVNC_VERSION}_amd64.deb/download" \
         -O turbovnc.deb && \
-    apt-get install -y ./turbovnc.deb && \
+    apt-get instal -y ./turbovnc.deb && \
     rm turbovnc.deb && \
     ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
