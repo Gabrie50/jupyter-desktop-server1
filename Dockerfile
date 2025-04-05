@@ -120,8 +120,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     git clone --recurse-submodules https://codeberg.org/dnkl/foot.git /opt/foot && \
     cd /opt/foot && \
-    meson setup build --prefix=/usr --wrap-mode=nodownload --buildtype=release --auto-features=enabled --backend=ninja --force-fallback-for=fcft --reconfigure && \
-    meson configure build -Dsandbox=disabled && \
+    meson setup build --prefix=/usr --wrap-mode=nodownload -Dsandbox=disabled && \
     ninja -C build && \
     ninja -C build install && \
     cd / && rm -rf /opt/foot
