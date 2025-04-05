@@ -18,7 +18,6 @@ RUN apt-get update && apt-get install -y \
     wget \
     meson \
     cargo \
-    python3-pip \
     libxcb1-dev libxcb-render0-dev libxcb-xfixes0-dev \
     libxkbcommon-dev libxkbcommon-x11-dev \
     libwayland-dev libegl1-mesa-dev libpixman-1-dev libinput-dev \
@@ -27,7 +26,7 @@ RUN apt-get update && apt-get install -y \
     libxcb-xkb-dev libx11-xcb-dev xwayland wayland-protocols \
     dbus-x11 xauth libgtk-3-dev \
     libzip-dev librsvg2-dev libcairo2-dev libfmt-dev nlohmann-json3-dev \
-    foot
+    curl unzip ca-certificates
 
 # 2) GCC‑13/G++‑13 para suporte a std::format
 RUN add-apt-repository ppa:ubuntu-toolchain-r/test -y && \
@@ -76,11 +75,9 @@ RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor
         -DCMAKE_BUILD_TYPE=Release \
         -DHYPRCURSOR_BUILD_TESTS=OFF \
         -DHYPRCURSOR_BUILD_UTIL=OFF && \
-    cmake --build /opt/hyprcursor/build --verbose && \
+    cmake --build /opt/hyprcursor/build && \
     cmake --install /opt/hyprcursor/build && \
     rm -rf /opt/hyprcursor
-    
-    
 
 # 8) Hyprland v0.39.1
 RUN git clone --recursive -b v0.39.1 https://github.com/hyprwm/Hyprland.git /opt/Hyprland && \
@@ -142,3 +139,5 @@ RUN fix-permissions /opt/install
 
 USER $NB_USER
 RUN cd /opt/install && conda env update -n base --file environment.yml || true
+
+ENV PATH="/home/jovyan/.local/bin:$PATH"
