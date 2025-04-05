@@ -51,13 +51,14 @@ RUN apt-get remove -y cmake && \
     ./cmake-3.30.0-linux-x86_64.sh --skip-license --prefix=/usr/local && \
     rm cmake-3.30.0-linux-x86_64.sh
 
-# Compila e instala o Hyprland
+# Compila e instala o Hyprland (sem aquamarine)
 RUN git clone --recursive https://github.com/hyprwm/Hyprland.git /opt/Hyprland && \
     cd /opt/Hyprland && \
-    cmake -B build -DCMAKE_BUILD_TYPE=Release && \
+    cmake -B build -DCMAKE_BUILD_TYPE=Release -DNO_AQUAMARINE=ON && \
     cmake --build build -j$(nproc) && \
     cmake --install build && \
     rm -rf /opt/Hyprland
+    
 
 # Compila e instala o foot terminal
 RUN git clone https://codeberg.org/dnkl/foot.git /opt/foot && \
