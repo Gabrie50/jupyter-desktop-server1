@@ -7,7 +7,7 @@ ARG NB_GID
 
 USER root
 
-# 1) Instala dependências de sistema e ferramentas de build
+# 1) Dependências de sistema e ferramentas de build
 RUN apt-get update && apt-get install -y \
     software-properties-common \
     build-essential \
@@ -26,24 +26,24 @@ RUN apt-get update && apt-get install -y \
     libxcb-icccm4-dev libxcb-cursor-dev libxcb-xinerama0-dev \
     libxcb-xkb-dev libx11-xcb-dev xwayland wayland-protocols \
     dbus-x11 xauth libgtk-3-dev \
-    libzip-dev librsvg2-dev libfmt-dev nlohmann-json3-dev \
+    libzip-dev librsvg2-dev libcairo2-dev libfmt-dev nlohmann-json3-dev \
     foot
 
-# 2) Adiciona PPA e instala GCC‑13/G++‑13 (para ter <format>)
+# 2) GCC‑13/G++‑13 para suporte a std::format
 RUN add-apt-repository ppa:ubuntu-toolchain-r/test -y && \
     apt-get update && \
     apt-get install -y gcc-13 g++-13 libstdc++-13-dev && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100 && \
     update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
 
-# 3) Atualiza CMake para 3.30+
+# 3) CMake 3.30+
 RUN apt-get remove -y cmake && \
     wget -q https://github.com/Kitware/CMake/releases/download/v3.30.0/cmake-3.30.0-linux-x86_64.sh && \
     chmod +x cmake-3.30.0-linux-x86_64.sh && \
     ./cmake-3.30.0-linux-x86_64.sh --skip-license --prefix=/usr/local && \
     rm cmake-3.30.0-linux-x86_64.sh
 
-# 4) Instala hyprutils (dep. de hyprlang)
+# 4) hyprutils (dependência do hyprlang)
 RUN git clone --depth 1 --branch v0.1.1 https://github.com/hyprwm/hyprutils.git /opt/hyprutils && \
     cd /opt/hyprutils && \
     cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release && \
@@ -51,18 +51,25 @@ RUN git clone --depth 1 --branch v0.1.1 https://github.com/hyprwm/hyprutils.git 
     cmake --install build && \
     rm -rf /opt/hyprutils
 
-# 5) Compila e instala hyprlang (usa std::format)
-RUN git clone --depth 1 --branch v0.3.2 https://github.com/hyprwm/hyprlang.git /opt/hyprlang && \
+# 5) tomlplusplus (header-only) + .pc para pkg-config
+RUN git clone --depth 1 --branch v3.2.0 https://github.com/marzer/tomlplusplus.git /opt/tomlplusplus && \
+    cd /opt/tomlplusplus && \
+    cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local && \
+    cmake --build build && \
+    cmake --install build && \
+    printf 'prefix=/usr/local\nexec_prefix=${prefix}\nlibdir=${exec_prefix}/lib\nincludedir=${prefix}/include\n\nName: tomlplusplus\nDescription: Header-only TOML parser library\nVersion: 3.2.0\nRequires:\nLibs:\nCflags: -I${includedir}\n' \
+        > /usr/local/lib/pkgconfig/tomlplusplus.pc && \
+    rm -rf /opt/tomlplusplus
+
+# 6) hyprlang v0.4.2 (usa std::format)
+RUN git clone --depth 1 --branch v0.4.2 https://github.com/hyprwm/hyprlang.git /opt/hyprlang && \
     cd /opt/hyprlang && \
-    cmake -B build -G Ninja \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_C_COMPILER=gcc \
-        -DCMAKE_CXX_COMPILER=g++ && \
+    cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release && \
     cmake --build build && \
     cmake --install build && \
     rm -rf /opt/hyprlang
 
-# 6) Compila e instala hyprcursor
+# 7) hyprcursor (depende de hyprlang>=0.4.2 e tomlplusplus)
 RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor && \
     cd /opt/hyprcursor && \
     cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release && \
@@ -70,7 +77,7 @@ RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor
     cmake --install build && \
     rm -rf /opt/hyprcursor
 
-# 7) Compila e instala Hyprland
+# 8) Hyprland v0.39.1
 RUN git clone --recursive -b v0.39.1 https://github.com/hyprwm/Hyprland.git /opt/Hyprland && \
     cd /opt/Hyprland && \
     cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release && \
@@ -78,7 +85,7 @@ RUN git clone --recursive -b v0.39.1 https://github.com/hyprwm/Hyprland.git /opt
     cmake --install build && \
     rm -rf /opt/Hyprland
 
-# 8) Compila e instala o terminal foot
+# 9) Terminal foot
 RUN git clone https://codeberg.org/dnkl/foot.git /opt/foot && \
     cd /opt/foot && \
     meson setup build && \
@@ -86,14 +93,14 @@ RUN git clone https://codeberg.org/dnkl/foot.git /opt/foot && \
     ninja -C build install && \
     rm -rf /opt/foot
 
-# 9) Compila e instala o Eww
+# 10) Eww
 RUN git clone https://github.com/elkowar/eww.git /opt/eww && \
     cd /opt/eww && \
     cargo build --release && \
     install -Dm755 target/release/eww /usr/local/bin/eww && \
     rm -rf /opt/eww
 
-# 10) Instala TurboVNC
+# 11) TurboVNC
 ARG TURBOVNC_VERSION=2.2.6
 RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc_${TURBOVNC_VERSION}_amd64.deb/download" \
         -O turbovnc.deb && \
@@ -101,7 +108,7 @@ RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}
     rm turbovnc.deb && \
     ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
-# 11) Configura widget Eww
+# 12) Widget Eww de exemplo
 RUN mkdir -p /home/jovyan/.config/eww/widgets && \
     echo '(defwidget hello-widget [] (box :orientation "vertical" (label :text "Olá, Jovyan!") (label :text "Hyprland está rodando!")))' \
         > /home/jovyan/.config/eww/eww.yuck && \
@@ -109,7 +116,7 @@ RUN mkdir -p /home/jovyan/.config/eww/widgets && \
         > /home/jovyan/.config/eww/launch.sh && \
     chmod +x /home/jovyan/.config/eww/launch.sh
 
-# 12) xstartup do VNC
+# 13) xstartup para TurboVNC + Hyprland + Eww
 RUN mkdir -p /home/jovyan/.vnc && \
     printf '#!/bin/sh\n\
 export XDG_SESSION_TYPE=wayland\n\
@@ -123,7 +130,7 @@ sleep 3\n\
         > /home/jovyan/.vnc/xstartup && \
     chmod +x /home/jovyan/.vnc/xstartup
 
-# 13) Permissões e Conda
+# 14) Permissões e Conda
 RUN chown -R $NB_UID:$NB_GID /home/jovyan
 ADD . /opt/install
 RUN fix-permissions /opt/install
