@@ -1,3 +1,4 @@
 #!/bin/sh
+export DISPLAY=:0
 cd "$HOME"
-exec dbus-launch Hyprland
+exec /usr/bin/dbus-launch hyprland
