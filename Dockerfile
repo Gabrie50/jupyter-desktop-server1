@@ -18,22 +18,7 @@ RUN apt-get -y update && apt-get install -y \
     libevdev-dev \
     libxcb-xfixes0-dev
 
-# Clonar o repositório com os arquivos Hyprland, foot e eww
-RUN git clone https://github.com/Gabrie50/jupyter-desktop-server1.git /opt/jupyter-desktop-server1
 
-# Copiar os arquivos Hyprland, foot e eww para o diretório adequado no container
-COPY /opt/jupyter-desktop-server1/Hyprland\ \(Wayland\)/Hyprland /opt/Hyprland
-COPY /opt/jupyter-desktop-server1/Hyprland\ \(Wayland\)/foot /opt/foot
-COPY /opt/jupyter-desktop-server1/Hyprland\ \(Wayland\)/eww /opt/eww
-
-# Instalar o Hyprland
-RUN cd /opt/Hyprland && make install
-
-# Instalar foot e eww
-RUN tar -xzf /opt/foot/foot-1.10.0-x86_64-linux.tar.gz -C /opt/ && \
-    ln -s /opt/foot-1.10.0/bin
-
-RUN cd /opt/eww && make && make install
 
 # Baixar e instalar o TurboVNC
 ARG TURBOVNC_VERSION=2.2.6
