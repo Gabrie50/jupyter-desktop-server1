@@ -29,7 +29,6 @@ RUN cd /opt/Hyprland && make install
 # Instalar foot e eww
 RUN tar -xzf /opt/foot/foot-1.10.0-x86_64-linux.tar.gz -C /opt/ && \
     ln -s /opt/foot-1.10.0/bin
-    
 
 RUN cd /opt/eww && make && make install
 
