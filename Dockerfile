@@ -112,24 +112,21 @@ RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor
 
 
 # 8) Terminal foot
-
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-      libfcft-dev libpixman-1-dev wayland-protocols \
-      libxkbcommon-dev libwayland-dev libxkbcommon-x11-dev \
-      libtinfo-dev libudev-dev libharfbuzz-dev \
-      meson ninja-build && \
+      git meson ninja-build \
+      libpixman-1-dev libxkbcommon-dev libwayland-dev \
+      libwayland-bin wayland-protocols \
+      libxkbcommon-x11-dev libtinfo-dev \
+      libudev-dev libharfbuzz-dev && \
     rm -rf /var/lib/apt/lists/* && \
     git clone https://codeberg.org/dnkl/foot.git /opt/foot && \
     cd /opt/foot && \
-    meson setup build \
-      --buildtype=release \
-      --prefix=/usr \
-      -Dexamples=false \
-      -Dtests=false && \
+    meson setup build --prefix=/usr && \
     ninja -C build && \
     ninja -C build install && \
     rm -rf /opt/foot
+    
     
 
 # 9) Eww
