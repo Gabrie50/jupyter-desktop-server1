@@ -112,12 +112,25 @@ RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor
 
 
 # 8) Terminal foot
-RUN git clone https://codeberg.org/dnkl/foot.git /opt/foot && \
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      libfcft-dev libpixman-1-dev wayland-protocols \
+      libxkbcommon-dev libwayland-dev libxkbcommon-x11-dev \
+      libtinfo-dev libudev-dev libharfbuzz-dev \
+      meson ninja-build && \
+    rm -rf /var/lib/apt/lists/* && \
+    git clone https://codeberg.org/dnkl/foot.git /opt/foot && \
     cd /opt/foot && \
-    meson setup build && \
+    meson setup build \
+      --buildtype=release \
+      --prefix=/usr \
+      -Dexamples=false \
+      -Dtests=false && \
     ninja -C build && \
     ninja -C build install && \
     rm -rf /opt/foot
+    
 
 # 9) Eww
 RUN git clone https://github.com/elkowar/eww.git /opt/eww && \
