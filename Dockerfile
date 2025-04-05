@@ -8,11 +8,6 @@ RUN apt-get -y update && apt-get install -y \
     firefox \
     wget \
     xorg \
-    xfce4 \
-    xfce4-panel \
-    xfce4-session \
-    xfce4-settings \
-    xubuntu-icon-theme \
     wayland \
     hyprland \
     foot \
