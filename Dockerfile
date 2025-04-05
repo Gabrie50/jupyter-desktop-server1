@@ -69,29 +69,44 @@ RUN git clone --depth 1 --branch v0.4.2 https://github.com/hyprwm/hyprlang.git /
     rm -rf /opt/hyprlang
 
     
-# 7) Instalar toml++ e hyprcursor (com patch no CMakeLists.txt para evitar pkg-config)
+# 7) Instalar toml++ e hyprcursor (sem alterar o CMakeLists.txt)
+
+# 7.1) Dependências de compilação + dev de libzip, cairo e librsvg
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        git cmake ninja-build pkg-config build-essential && \
+        git cmake ninja-build pkg-config build-essential \
+        libzip-dev libcairo2-dev librsvg2-dev && \
     rm -rf /var/lib/apt/lists/*
 
-# toml++
-RUN git clone --depth 1 https://github.com/marzer/tomlplusplus.git /opt/tomlplusplus
+# 7.2) Clonar tomlplusplus, instalar headers e gerar .pc para pkg-config
+RUN git clone --depth 1 https://github.com/marzer/tomlplusplus.git /opt/tomlplusplus && \
+    mkdir -p /usr/local/include/toml++ && \
+    cp -r /opt/tomlplusplus/include/toml++ /usr/local/include/ && \
+    mkdir -p /usr/local/lib/pkgconfig && \
+    cat << 'EOF' > /usr/local/lib/pkgconfig/tomlplusplus.pc
+prefix=/usr/local
+exec_prefix=\${prefix}
+includedir=\${prefix}/include
 
-# hyprcursor com patch
+Name: tomlplusplus
+Description: Header-only TOML parser library
+Version: 3.2.4
+Requires:
+Libs:
+Cflags: -I\${includedir}
+EOF && \
+    rm -rf /opt/tomlplusplus
+
+# 7.3) Clonar, compilar e instalar o hyprcursor
 RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor && \
-    find /opt/hyprcursor -name 'CMakeLists.txt' -exec sed -i '/pkg_check_modules.*tomlplusplus/d' {} + && \
     sed -i '/add_subdirectory(hyprcursor-util)/d' /opt/hyprcursor/CMakeLists.txt && \
-    sed -i 's|target_include_directories(hyprcursor PUBLIC .*|target_include_directories(hyprcursor PUBLIC /opt/tomlplusplus/include)|' /opt/hyprcursor/CMakeLists.txt
-
-# Compilar
-RUN cmake -S /opt/hyprcursor -B /opt/hyprcursor/build -G Ninja \
+    cmake -S /opt/hyprcursor -B /opt/hyprcursor/build -G Ninja \
         -DCMAKE_BUILD_TYPE=Release \
         -DHYPRCURSOR_BUILD_TESTS=OFF \
         -DHYPRCURSOR_BUILD_UTIL=OFF && \
     cmake --build /opt/hyprcursor/build && \
     cmake --install /opt/hyprcursor/build && \
-    rm -rf /opt/hyprcursor /opt/tomlplusplus
+    rm -rf /opt/hyprcursor
     
 
 
