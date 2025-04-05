@@ -1,3 +1,4 @@
+# Dockerfile com suporte a Hyprland + Jupyter + Eww + TurboVNC
 FROM jupyter/base-notebook:ubuntu-22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -70,11 +71,12 @@ RUN git clone --depth 1 --branch v0.4.2 https://github.com/hyprwm/hyprlang.git /
     cmake --install build && \
     rm -rf /opt/hyprlang
 
-# 7) hyprcursor
+# 7) hyprcursor (CORRIGIDO com include do toml++)
 RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor && \
     sed -i '/add_subdirectory(hyprcursor-util)/d' /opt/hyprcursor/CMakeLists.txt && \
     cmake -S /opt/hyprcursor -B /opt/hyprcursor/build -G Ninja \
         -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_CXX_FLAGS="-I/usr/local/include" \
         -DHYPRCURSOR_BUILD_TESTS=OFF \
         -DHYPRCURSOR_BUILD_UTIL=OFF && \
     cmake --build /opt/hyprcursor/build && \
