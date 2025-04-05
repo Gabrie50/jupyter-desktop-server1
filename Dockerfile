@@ -1,12 +1,8 @@
-FROM jupyter/base-notebook:python-3.10
+FROM jupyter/base-notebook:python-3.7.6
 
 USER root
 
-# Variáveis para compilação
-ENV DEBIAN_FRONTEND=noninteractive
-ENV PATH="/root/.cargo/bin:${PATH}"
-
-# Atualiza pacotes e instala dependências
+# Atualiza e instala pacotes básicos + Hyprland dependências
 RUN apt-get update && apt-get install -y \
     dbus-x11 \
     firefox \
@@ -22,13 +18,12 @@ RUN apt-get update && apt-get install -y \
     meson \
     ninja-build \
     cmake \
-    curl \
-    build-essential \
     libegl-dev \
     libwayland-dev \
     libdrm-dev \
     libxkbcommon-dev \
     libpixman-1-dev \
+    wayland-utils \
     libglib2.0-dev \
     libpango1.0-dev \
     libpng-dev \
@@ -45,31 +40,12 @@ RUN apt-get update && apt-get install -y \
     libxcb-shape0-dev \
     libxcb-xinerama0-dev \
     libx11-xcb-dev \
-    libxcb-util0-dev \
-    libgtk-3-dev \
-    ca-certificates \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    libxcb-util0-dev
 
-# Instala Rust (necessário para compilar o eww)
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-
-# Instala foot
-RUN git clone https://codeberg.org/dnkl/foot.git && \
-    cd foot && \
-    meson build && \
-    ninja -C build && \
-    ninja -C build install && \
-    cd .. && rm -rf foot
-
-# Instala eww
-RUN git clone https://github.com/elkowar/eww.git && \
-    cd eww && \
-    cargo build --release && \
-    install -Dm755 target/release/eww /usr/local/bin/eww && \
-    cd .. && rm -rf eww
-
-USER ${NB_UID}
-
+# Clona o Hyprland
+RUN git clone --recursive https://github.com/hyprwm/Hyprland.git /opt/Hyprland && \
+    cd /opt/Hyprland && \
+    make all && make install
 
 # Instala TurboVNC
 ARG TURBOVNC_VERSION=2.2.6
