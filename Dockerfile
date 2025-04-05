@@ -120,9 +120,9 @@ RUN apt-get update && \
       libxkbcommon-x11-dev libtinfo-dev \
       libudev-dev libharfbuzz-dev && \
     rm -rf /var/lib/apt/lists/* && \
-    git clone --recurse-submodules https://codeberg.org/dnkl/foot.git /opt/foot && \
+    git clone --depth=1 https://codeberg.org/dnkl/foot.git /opt/foot && \
     cd /opt/foot && \
-    meson setup build --prefix=/usr && \
+    meson setup build --prefix=/usr -Dfcft:dependency=system -Dprotocols_dir=/usr/share/wayland-protocols && \
     ninja -C build && \
     ninja -C build install && \
     cd / && rm -rf /opt/foot
