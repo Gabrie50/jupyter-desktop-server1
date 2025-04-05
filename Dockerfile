@@ -9,14 +9,13 @@ USER root
 
 # Atualiza pacotes e instala dependências básicas
 RUN apt-get update && apt-get install -y \
+    software-properties-common \
     build-essential \
     curl \
     git \
-    wget \
     cmake \
     meson \
     ninja-build \
-    cargo \
     libxcb1-dev \
     libxcb-render0-dev \
     libxcb-xfixes0-dev \
@@ -37,36 +36,40 @@ RUN apt-get update && apt-get install -y \
     libx11-xcb-dev \
     xwayland \
     wayland-protocols \
+    cargo \
+    wget \
+    foot \
     dbus-x11 \
     xauth \
     libgtk-3-dev \
-    libgbm-dev \
-    libvulkan-dev \
-    libdrm-dev \
-    libseat-dev \
-    libsystemd-dev \
-    libudev-dev \
-    foot
+    python3-pip
 
-# Atualiza o CMake para 3.30+
+# Instala GCC e G++ 12 para suporte a <format>
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test -y && \
+    apt-get update && \
+    apt-get install -y gcc-12 g++-12 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100 && \
+    update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100
+
+# Atualiza o CMake para a versão 3.30+
 RUN apt-get remove -y cmake && \
     wget https://github.com/Kitware/CMake/releases/download/v3.30.0/cmake-3.30.0-linux-x86_64.sh && \
     chmod +x cmake-3.30.0-linux-x86_64.sh && \
     ./cmake-3.30.0-linux-x86_64.sh --skip-license --prefix=/usr/local && \
     rm cmake-3.30.0-linux-x86_64.sh
 
-# Instala Hyprlang
+# Instala hyprlang (necessário para Hyprland)
 RUN git clone --depth 1 --branch v0.3.2 https://github.com/hyprwm/hyprlang.git /opt/hyprlang && \
     cd /opt/hyprlang && \
-    cmake -B build -DCMAKE_BUILD_TYPE=Release && \
+    CC=gcc-12 CXX=g++-12 cmake -B build -DCMAKE_BUILD_TYPE=Release && \
     cmake --build build -j$(nproc) && \
     cmake --install build && \
     rm -rf /opt/hyprlang
 
-# Instala Hyprcursor
-RUN git clone --depth 1 --branch v0.1.7 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor && \
+# Instala hyprcursor (opcional, mas pode ser exigido por Hyprland)
+RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor && \
     cd /opt/hyprcursor && \
-    cmake -B build -DCMAKE_BUILD_TYPE=Release && \
+    CC=gcc-12 CXX=g++-12 cmake -B build -DCMAKE_BUILD_TYPE=Release && \
     cmake --build build -j$(nproc) && \
     cmake --install build && \
     rm -rf /opt/hyprcursor
@@ -74,7 +77,7 @@ RUN git clone --depth 1 --branch v0.1.7 https://github.com/hyprwm/hyprcursor.git
 # Compila e instala o Hyprland
 RUN git clone --recursive -b v0.39.1 https://github.com/hyprwm/Hyprland.git /opt/Hyprland && \
     cd /opt/Hyprland && \
-    cmake -B build -DCMAKE_BUILD_TYPE=Release && \
+    CC=gcc-12 CXX=g++-12 cmake -B build -DCMAKE_BUILD_TYPE=Release && \
     cmake --build build -j$(nproc) && \
     cmake --install build && \
     rm -rf /opt/Hyprland
@@ -123,7 +126,7 @@ sleep 3\n\
 # Corrige permissões
 RUN chown -R $NB_UID:$NB_GID /home/jovyan
 
-# Copia e instala ambiente Conda (se existir environment.yml)
+# Copia e instala ambiente Conda (caso tenha environment.yml)
 ADD . /opt/install
 RUN fix-permissions /opt/install
 
