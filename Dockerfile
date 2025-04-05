@@ -69,29 +69,30 @@ RUN git clone --depth 1 --branch v0.4.2 https://github.com/hyprwm/hyprlang.git /
     rm -rf /opt/hyprlang
 
     
-# 7) hyprcursor (CORRIGIDO com include do toml++)
-# Dependências necessárias para compilar
+# 7) Instalar toml++ e hyprcursor (com patch no CMakeLists.txt para evitar pkg-config)
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         git cmake ninja-build pkg-config build-essential
 
-# Instalar toml++ (header-only)
-RUN git clone --depth 1 https://github.com/marzer/tomlplusplus.git /opt/tomlplusplus && \
-    mkdir -p /usr/local/include/toml++ && \
-    cp -r /opt/tomlplusplus/include/toml++ /usr/local/include/ && \
-    rm -rf /opt/tomlplusplus
+# Clonar toml++ manualmente
+RUN git clone --depth 1 https://github.com/marzer/tomlplusplus.git /opt/tomlplusplus
 
-# Clonar, compilar e instalar hyprcursor
+# Clonar hyprcursor
 RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor && \
     sed -i '/add_subdirectory(hyprcursor-util)/d' /opt/hyprcursor/CMakeLists.txt && \
-    cmake -S /opt/hyprcursor -B /opt/hyprcursor/build -G Ninja \
+    sed -i '/pkg_check_modules(tomlplusplus REQUIRED tomlplusplus)/d' /opt/hyprcursor/CMakeLists.txt && \
+    sed -i 's|target_include_directories(hyprcursor PUBLIC .*|target_include_directories(hyprcursor PUBLIC /opt/tomlplusplus/include)|' /opt/hyprcursor/CMakeLists.txt
+
+# Build e install hyprcursor
+RUN cmake -S /opt/hyprcursor -B /opt/hyprcursor/build -G Ninja \
         -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_CXX_FLAGS="-I/usr/local/include" \
         -DHYPRCURSOR_BUILD_TESTS=OFF \
         -DHYPRCURSOR_BUILD_UTIL=OFF && \
     cmake --build /opt/hyprcursor/build && \
     cmake --install /opt/hyprcursor/build && \
-    rm -rf /opt/hyprcursor
+    rm -rf /opt/hyprcursor /opt/tomlplusplus
+    
 
 
 # 8) Terminal foot
