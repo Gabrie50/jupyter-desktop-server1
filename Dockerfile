@@ -48,9 +48,9 @@ RUN apt-get update && apt-get install -y \
 # Instala clang 19 com suporte a <format>
 RUN apt-get update && apt-get install -y wget software-properties-common && \
     bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)" 19 && \
-    update-alternatives --install /usr/bin/cc cc /usr/bin/clang-19 100 && \
-    update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-19 100
-    
+    ln -sf /usr/bin/clang-19 /usr/bin/clang && \
+    ln -sf /usr/bin/clang++-19 /usr/bin/clang++
+
 # Atualiza o CMake para a versão 3.30+
 RUN apt-get remove -y cmake && \
     wget https://github.com/Kitware/CMake/releases/download/v3.30.0/cmake-3.30.0-linux-x86_64.sh && \
@@ -61,7 +61,7 @@ RUN apt-get remove -y cmake && \
 # Instala hyprlang
 RUN git clone --depth 1 --branch v0.3.2 https://github.com/hyprwm/hyprlang.git /opt/hyprlang && \
     cd /opt/hyprlang && \
-    CC=clang-17 CXX=clang++-17 cmake -B build -DCMAKE_BUILD_TYPE=Release && \
+    cmake -B build -DCMAKE_BUILD_TYPE=Release && \
     cmake --build build -j$(nproc) && \
     cmake --install build && \
     rm -rf /opt/hyprlang
@@ -69,7 +69,7 @@ RUN git clone --depth 1 --branch v0.3.2 https://github.com/hyprwm/hyprlang.git /
 # Instala hyprcursor
 RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor && \
     cd /opt/hyprcursor && \
-    CC=clang-17 CXX=clang++-17 cmake -B build -DCMAKE_BUILD_TYPE=Release && \
+    cmake -B build -DCMAKE_BUILD_TYPE=Release && \
     cmake --build build -j$(nproc) && \
     cmake --install build && \
     rm -rf /opt/hyprcursor
@@ -77,10 +77,11 @@ RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor
 # Compila e instala o Hyprland
 RUN git clone --recursive -b v0.39.1 https://github.com/hyprwm/Hyprland.git /opt/Hyprland && \
     cd /opt/Hyprland && \
-    CC=clang-17 CXX=clang++-17 cmake -B build -DCMAKE_BUILD_TYPE=Release && \
+    cmake -B build -DCMAKE_BUILD_TYPE=Release && \
     cmake --build build -j$(nproc) && \
     cmake --install build && \
     rm -rf /opt/Hyprland
+    
     
 # Compila e instala o foot terminal
 RUN git clone https://codeberg.org/dnkl/foot.git /opt/foot && \
