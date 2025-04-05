@@ -32,8 +32,6 @@ RUN apt-get update && apt-get install -y \
     libxcb-cursor-dev \
     libxcb-xinerama0-dev \
     libxcb-xkb-dev \
-    libxkbcommon-dev \
-    libxkbcommon-x11-dev \
     libx11-xcb-dev \
     xwayland \
     wayland-protocols \
@@ -51,14 +49,13 @@ RUN apt-get remove -y cmake && \
     ./cmake-3.30.0-linux-x86_64.sh --skip-license --prefix=/usr/local && \
     rm cmake-3.30.0-linux-x86_64.sh
 
-# Compila e instala o Hyprland (sem aquamarine)
-RUN git clone --recursive https://github.com/hyprwm/Hyprland.git /opt/Hyprland && \
+# Compila e instala o Hyprland (usando versão anterior sem dependência do Aquamarine)
+RUN git clone --recursive -b v0.39.1 https://github.com/hyprwm/Hyprland.git /opt/Hyprland && \
     cd /opt/Hyprland && \
-    cmake -B build -DCMAKE_BUILD_TYPE=Release -DNO_AQUAMARINE=ON && \
+    cmake -B build -DCMAKE_BUILD_TYPE=Release && \
     cmake --build build -j$(nproc) && \
     cmake --install build && \
     rm -rf /opt/Hyprland
-    
 
 # Compila e instala o foot terminal
 RUN git clone https://codeberg.org/dnkl/foot.git /opt/foot && \
