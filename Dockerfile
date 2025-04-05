@@ -10,11 +10,13 @@ USER root
 # Atualiza pacotes e instala dependências básicas
 RUN apt-get update && apt-get install -y \
     build-essential \
-    cmake \
     curl \
     git \
+    wget \
+    cmake \
     meson \
     ninja-build \
+    cargo \
     libxcb1-dev \
     libxcb-render0-dev \
     libxcb-xfixes0-dev \
@@ -35,21 +37,41 @@ RUN apt-get update && apt-get install -y \
     libx11-xcb-dev \
     xwayland \
     wayland-protocols \
-    cargo \
-    wget \
-    foot \
     dbus-x11 \
     xauth \
-    libgtk-3-dev
+    libgtk-3-dev \
+    libgbm-dev \
+    libvulkan-dev \
+    libdrm-dev \
+    libseat-dev \
+    libsystemd-dev \
+    libudev-dev \
+    foot
 
-# Atualiza o CMake para a versão 3.30+
+# Atualiza o CMake para 3.30+
 RUN apt-get remove -y cmake && \
     wget https://github.com/Kitware/CMake/releases/download/v3.30.0/cmake-3.30.0-linux-x86_64.sh && \
     chmod +x cmake-3.30.0-linux-x86_64.sh && \
     ./cmake-3.30.0-linux-x86_64.sh --skip-license --prefix=/usr/local && \
     rm cmake-3.30.0-linux-x86_64.sh
 
-# Compila e instala o Hyprland (usando versão anterior sem dependência do Aquamarine)
+# Instala Hyprlang
+RUN git clone --depth 1 --branch v0.3.2 https://github.com/hyprwm/hyprlang.git /opt/hyprlang && \
+    cd /opt/hyprlang && \
+    cmake -B build -DCMAKE_BUILD_TYPE=Release && \
+    cmake --build build -j$(nproc) && \
+    cmake --install build && \
+    rm -rf /opt/hyprlang
+
+# Instala Hyprcursor
+RUN git clone --depth 1 --branch v0.1.7 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor && \
+    cd /opt/hyprcursor && \
+    cmake -B build -DCMAKE_BUILD_TYPE=Release && \
+    cmake --build build -j$(nproc) && \
+    cmake --install build && \
+    rm -rf /opt/hyprcursor
+
+# Compila e instala o Hyprland
 RUN git clone --recursive -b v0.39.1 https://github.com/hyprwm/Hyprland.git /opt/Hyprland && \
     cd /opt/Hyprland && \
     cmake -B build -DCMAKE_BUILD_TYPE=Release && \
@@ -101,7 +123,7 @@ sleep 3\n\
 # Corrige permissões
 RUN chown -R $NB_UID:$NB_GID /home/jovyan
 
-# Copia e instala ambiente Conda (caso tenha um environment.yml)
+# Copia e instala ambiente Conda (se existir environment.yml)
 ADD . /opt/install
 RUN fix-permissions /opt/install
 
