@@ -1,48 +1,57 @@
-FROM jupyter/base-notebook:python-3.7.6
+FROM jupyter/base-notebook:ubuntu-22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ARG NB_USER
+ARG NB_UID
+ARG NB_GID
 
 USER root
 
-# Atualiza e instala dependências essenciais
+# Atualiza pacotes e instala dependências básicas
 RUN apt-get update && apt-get install -y \
-    dbus-x11 \
-    firefox \
-    xorg \
-    wayland-protocols \
-    libgtk-3-dev \
-    libpango1.0-dev \
-    libgdk-pixbuf2.0-dev \
-    libglib2.0-dev \
-    libcairo2-dev \
-    scdoc \
-    cargo \
-    clang \
-    git \
+    build-essential \
     cmake \
+    curl \
+    git \
     meson \
     ninja-build \
-    libwayland-dev \
-    libxkbcommon-dev \
     libxcb1-dev \
-    libxcb-keysyms1-dev \
+    libxcb-render0-dev \
     libxcb-xfixes0-dev \
-    libpixman-1-dev \
+    libxkbcommon-dev \
+    libxkbcommon-x11-dev \
+    libwayland-dev \
     libegl1-mesa-dev \
-    libdrm-dev \
-    libgbm-dev \
+    libpixman-1-dev \
     libinput-dev \
     libx11-dev \
-    libgl1-mesa-dev \
-    libxrandr-dev \
-    libxcb-render0-dev \
-    libxcb-shape0-dev \
-    libxcb-xinerama0-dev \
-    libxcb-util0-dev \
-    libxcb-cursor-dev \
-    libxcb-icccm4-dev \
+    libglvnd-dev \
+    libxcb-composite0-dev \
     libxcb-ewmh-dev \
-    wget
+    libxcb-icccm4-dev \
+    libxcb-cursor-dev \
+    libxcb-xinerama0-dev \
+    libxcb-xkb-dev \
+    libxkbcommon-dev \
+    libxkbcommon-x11-dev \
+    libx11-xcb-dev \
+    xwayland \
+    wayland-protocols \
+    cargo \
+    wget \
+    foot \
+    dbus-x11 \
+    xauth \
+    libgtk-3-dev
 
-# Compila e instala Hyprland
+# Atualiza o CMake para a versão 3.30+
+RUN apt-get remove -y cmake && \
+    wget https://github.com/Kitware/CMake/releases/download/v3.30.0/cmake-3.30.0-linux-x86_64.sh && \
+    chmod +x cmake-3.30.0-linux-x86_64.sh && \
+    ./cmake-3.30.0-linux-x86_64.sh --skip-license --prefix=/usr/local && \
+    rm cmake-3.30.0-linux-x86_64.sh
+
+# Compila e instala o Hyprland
 RUN git clone --recursive https://github.com/hyprwm/Hyprland.git /opt/Hyprland && \
     cd /opt/Hyprland && \
     cmake -B build -DCMAKE_BUILD_TYPE=Release && \
@@ -50,7 +59,7 @@ RUN git clone --recursive https://github.com/hyprwm/Hyprland.git /opt/Hyprland &
     cmake --install build && \
     rm -rf /opt/Hyprland
 
-# Compila e instala foot terminal
+# Compila e instala o foot terminal
 RUN git clone https://codeberg.org/dnkl/foot.git /opt/foot && \
     cd /opt/foot && \
     meson setup build && \
@@ -58,7 +67,7 @@ RUN git clone https://codeberg.org/dnkl/foot.git /opt/foot && \
     ninja -C build install && \
     rm -rf /opt/foot
 
-# Compila e instala Eww com widgets
+# Compila e instala o Eww
 RUN git clone https://github.com/elkowar/eww.git /opt/eww && \
     cd /opt/eww && \
     cargo build --release && \
@@ -72,13 +81,13 @@ RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}
     rm ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
     ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
-# Configuração do Eww com widget
+# Cria configuração do Eww com widget
 RUN mkdir -p /home/jovyan/.config/eww/widgets && \
     echo '(defwidget hello-widget [] (box :orientation "vertical" (label :text "Olá, Jovyan!") (label :text "Hyprland está rodando!")))' > /home/jovyan/.config/eww/eww.yuck && \
     echo '#!/bin/sh\neww daemon\neww open hello-widget' > /home/jovyan/.config/eww/launch.sh && \
     chmod +x /home/jovyan/.config/eww/launch.sh
 
-# Cria o xstartup com Hyprland e Eww
+# Cria xstartup para TurboVNC com Hyprland e Eww
 RUN mkdir -p /home/jovyan/.vnc && \
     echo '#!/bin/sh\n\
 export XDG_SESSION_TYPE=wayland\n\
@@ -92,16 +101,12 @@ sleep 3\n\
     chmod +x /home/jovyan/.vnc/xstartup
 
 # Corrige permissões
-RUN chown -R $NB_UID:$NB_GID /home/jovyan && \
-    chown -R $NB_UID:$NB_GID $HOME
+RUN chown -R $NB_UID:$NB_GID /home/jovyan
 
-# Instala Conda environment
+# Copia e instala ambiente Conda (caso tenha um environment.yml)
 ADD . /opt/install
 RUN fix-permissions /opt/install
 
 USER $NB_USER
 
-# Atualiza ambiente Conda
-RUN cd /opt/install && \
-    conda env update -n base --file environment.yml || true
-    
+RUN cd /opt/install && conda env update -n base --file environment.yml || true
