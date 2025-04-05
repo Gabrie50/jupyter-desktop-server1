@@ -2,16 +2,12 @@ FROM ubuntu:22.04
 
 USER root
 
-# Atualizando pacotes
+# Atualizando pacotes e instalando dependências
 RUN apt-get -y update && apt-get install -y \
     dbus-x11 \
     firefox \
     wget \
     xorg \
-    wayland \
-    hyprland \
-    foot \
-    eww \
     python3 \
     python3-pip \
     python3-dev \
@@ -19,11 +15,26 @@ RUN apt-get -y update && apt-get install -y \
     curl \
     gnupg2 \
     ca-certificates \
-    dbus-x11
+    software-properties-common
 
-# Instalando o Jupyter
-RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3 && \
-    pip3 install --no-cache-dir jupyter
+# Adicionando repositórios para Wayland e outros pacotes
+RUN add-apt-repository ppa:wayland-packages/wayland && apt-get update
+
+# Instalando o Wayland e outros pacotes necessários
+RUN apt-get install -y \
+    wayland-protocols
+
+# Instalando o Hyprland a partir do código-fonte
+RUN curl -sSL https://github.com/hyprwm/Hyprland/releases/download/v0.0.9/Hyprland-0.0.9.tar.gz | tar -xzv -C /tmp && \
+    cd /tmp/Hyprland && \
+    make && \
+    make install
+
+# Instalando o Eww a partir do repositório GitHub
+RUN git clone https://github.com/elkowar/eww.git /tmp/eww && \
+    cd /tmp/eww && \
+    make && \
+    sudo make install
 
 # Baixar e instalar o TurboVNC
 ARG TURBOVNC_VERSION=2.2.6
@@ -36,11 +47,4 @@ RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}
 # Conceder permissões corretas ao diretório HOME
 RUN chown -R $NB_UID:$NB_GID $HOME
 
-# Adicionando o diretório de instalação
-ADD . /opt/install
-RUN fix-permissions /opt/install
-
 USER $NB_USER
-
-# Atualizar o ambiente Conda
-RUN cd /opt/install && conda env update -n base --file environment.yml
