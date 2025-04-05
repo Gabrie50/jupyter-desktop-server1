@@ -1,4 +1,4 @@
-FROM jupyter/base-notebook:python-3.7.6
+FROM ubuntu:22.04
 
 USER root
 
@@ -8,17 +8,22 @@ RUN apt-get -y update && apt-get install -y \
     firefox \
     wget \
     xorg \
-    build-essential \
-    cmake \
-    git \
-    libwayland-dev \
-    libx11-dev \
-    libxrandr-dev \
-    libinput-dev \
-    libevdev-dev \
-    libxcb-xfixes0-dev
+    wayland \
+    hyprland \
+    foot \
+    eww \
+    python3 \
+    python3-pip \
+    python3-dev \
+    python3-venv \
+    curl \
+    gnupg2 \
+    ca-certificates \
+    dbus-x11
 
-
+# Instalando o Jupyter
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3 && \
+    pip3 install --no-cache-dir jupyter
 
 # Baixar e instalar o TurboVNC
 ARG TURBOVNC_VERSION=2.2.6
