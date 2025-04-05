@@ -120,12 +120,12 @@ RUN apt-get update && \
       libxkbcommon-x11-dev libtinfo-dev \
       libudev-dev libharfbuzz-dev && \
     rm -rf /var/lib/apt/lists/* && \
-    git clone https://codeberg.org/dnkl/foot.git /opt/foot && \
+    git clone --recurse-submodules https://codeberg.org/dnkl/foot.git /opt/foot && \
     cd /opt/foot && \
     meson setup build --prefix=/usr && \
     ninja -C build && \
     ninja -C build install && \
-    rm -rf /opt/foot
+    cd / && rm -rf /opt/foot
     
     
 
