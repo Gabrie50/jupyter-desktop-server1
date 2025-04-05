@@ -44,12 +44,12 @@ RUN apt-get update && apt-get install -y \
     libgtk-3-dev \
     python3-pip
 
-# Instala GCC e G++ 12 para suporte a <format>
-RUN add-apt-repository ppa:ubuntu-toolchain-r/test -y && \
-    apt-get update && \
-    apt-get install -y gcc-12 g++-12 && \
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100 && \
-    update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100
+
+# Instala clang 17 com suporte a <format>
+RUN apt-get update && apt-get install -y wget software-properties-common && \
+    bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)" 17 && \
+    update-alternatives --install /usr/bin/cc cc /usr/bin/clang-17 100 && \
+    update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-17 100
 
 # Atualiza o CMake para a versão 3.30+
 RUN apt-get remove -y cmake && \
@@ -58,18 +58,18 @@ RUN apt-get remove -y cmake && \
     ./cmake-3.30.0-linux-x86_64.sh --skip-license --prefix=/usr/local && \
     rm cmake-3.30.0-linux-x86_64.sh
 
-# Instala hyprlang (necessário para Hyprland)
+# Instala hyprlang
 RUN git clone --depth 1 --branch v0.3.2 https://github.com/hyprwm/hyprlang.git /opt/hyprlang && \
     cd /opt/hyprlang && \
-    CC=gcc-12 CXX=g++-12 cmake -B build -DCMAKE_BUILD_TYPE=Release && \
+    CC=clang-17 CXX=clang++-17 cmake -B build -DCMAKE_BUILD_TYPE=Release && \
     cmake --build build -j$(nproc) && \
     cmake --install build && \
     rm -rf /opt/hyprlang
 
-# Instala hyprcursor (opcional, mas pode ser exigido por Hyprland)
+# Instala hyprcursor
 RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor && \
     cd /opt/hyprcursor && \
-    CC=gcc-12 CXX=g++-12 cmake -B build -DCMAKE_BUILD_TYPE=Release && \
+    CC=clang-17 CXX=clang++-17 cmake -B build -DCMAKE_BUILD_TYPE=Release && \
     cmake --build build -j$(nproc) && \
     cmake --install build && \
     rm -rf /opt/hyprcursor
@@ -77,11 +77,11 @@ RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor
 # Compila e instala o Hyprland
 RUN git clone --recursive -b v0.39.1 https://github.com/hyprwm/Hyprland.git /opt/Hyprland && \
     cd /opt/Hyprland && \
-    CC=gcc-12 CXX=g++-12 cmake -B build -DCMAKE_BUILD_TYPE=Release && \
+    CC=clang-17 CXX=clang++-17 cmake -B build -DCMAKE_BUILD_TYPE=Release && \
     cmake --build build -j$(nproc) && \
     cmake --install build && \
     rm -rf /opt/Hyprland
-
+    
 # Compila e instala o foot terminal
 RUN git clone https://codeberg.org/dnkl/foot.git /opt/foot && \
     cd /opt/foot && \
