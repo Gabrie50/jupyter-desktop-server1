@@ -1,3 +1,11 @@
 #!/bin/sh
-cd "$HOME"
-exec /usr/bin/dbus-launch Hyprland
+export XDG_SESSION_TYPE=wayland
+export XDG_CURRENT_DESKTOP=Hyprland
+export WLR_NO_HARDWARE_CURSORS=1
+export GDK_BACKEND=wayland
+export QT_QPA_PLATFORM=wayland
+
+exec dbus-launch Hyprland &
+sleep 3
+/home/jovyan/.config/eww/launch.sh
+
