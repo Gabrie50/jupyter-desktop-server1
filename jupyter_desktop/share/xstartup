@@ -1,4 +1,3 @@
 #!/bin/sh
-export DISPLAY=:0
-cd "$HOME"
-exec /usr/bin/dbus-launch hyprland
+# Inicializa o D-Bus e o servidor gráfico Wayland (Hyprland)
+exec /usr/bin/dbus-launch --exit-with-session /opt/Hyprland/bin/Hyprland
