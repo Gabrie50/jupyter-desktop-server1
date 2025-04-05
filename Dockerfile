@@ -61,10 +61,12 @@ RUN apt-get remove -y cmake && \
 # Instala hyprlang
 RUN git clone --depth 1 --branch v0.3.2 https://github.com/hyprwm/hyprlang.git /opt/hyprlang && \
     cd /opt/hyprlang && \
-    cmake -B build -DCMAKE_BUILD_TYPE=Release && \
+    cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-19 -DCMAKE_CXX_COMPILER=clang++-19 \
+        -DCMAKE_CXX_FLAGS="-stdlib=libc++" -DCMAKE_EXE_LINKER_FLAGS="-stdlib=libc++" && \
     cmake --build build -j$(nproc) && \
     cmake --install build && \
     rm -rf /opt/hyprlang
+    
 
 # Instala hyprcursor
 RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor && \
