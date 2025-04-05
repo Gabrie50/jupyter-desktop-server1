@@ -18,17 +18,18 @@ RUN apt-get -y update && apt-get install -y \
     libevdev-dev \
     libxcb-xfixes0-dev
 
-# Copiar os arquivos do repositório para o container
-ADD Hyprland (Wayland)/Hyprland /opt/Hyprland
-ADD Hyprland (Wayland)/foot /opt/foot
-ADD Hyprland (Wayland)/eww /opt/eww
+# Corrigir o caminho dos arquivos para remover espaços
+ADD Hyprland_Wayland/Hyprland /opt/Hyprland
+ADD Hyprland_Wayland/foot /opt/foot
+ADD Hyprland_Wayland/eww /opt/eww
 
 # Instalar o Hyprland
 RUN cd /opt/Hyprland && make install
 
 # Instalar foot e eww
 RUN tar -xzf /opt/foot/foot-1.10.0-x86_64-linux.tar.gz -C /opt/ && \
-    ln -s /opt/foot-1.10.0/bin/foot /usr/local/bin/foot
+    ln -s /opt/foot-1.10.0/bin
+    
 
 RUN cd /opt/eww && make && make install
 
