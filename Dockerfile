@@ -45,12 +45,12 @@ RUN apt-get update && apt-get install -y \
     python3-pip
 
 
-# Instala clang 17 com suporte a <format>
+# Instala clang 19 com suporte a <format>
 RUN apt-get update && apt-get install -y wget software-properties-common && \
-    bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)" 17 && \
-    update-alternatives --install /usr/bin/cc cc /usr/bin/clang-17 100 && \
-    update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-17 100
-
+    bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)" 19 && \
+    update-alternatives --install /usr/bin/cc cc /usr/bin/clang-19 100 && \
+    update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-19 100
+    
 # Atualiza o CMake para a versão 3.30+
 RUN apt-get remove -y cmake && \
     wget https://github.com/Kitware/CMake/releases/download/v3.30.0/cmake-3.30.0-linux-x86_64.sh && \
