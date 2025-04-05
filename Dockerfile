@@ -72,10 +72,14 @@ RUN git clone --depth 1 --branch v0.4.2 https://github.com/hyprwm/hyprlang.git /
 # 7) hyprcursor (depende de hyprlang>=0.4.2 e tomlplusplus)
 RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor && \
     cd /opt/hyprcursor && \
-    cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release && \
-    cmake --build build && \
+    cmake -B build -G Ninja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DHYPRCURSOR_BUILD_TESTS=OFF \
+        -DHYPRCURSOR_BUILD_UTIL=OFF && \
+    cmake --build build --verbose && \
     cmake --install build && \
     rm -rf /opt/hyprcursor
+
 
 # 8) Hyprland v0.39.1
 RUN git clone --recursive -b v0.39.1 https://github.com/hyprwm/Hyprland.git /opt/Hyprland && \
