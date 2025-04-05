@@ -68,7 +68,20 @@ RUN git clone --depth 1 --branch v0.4.2 https://github.com/hyprwm/hyprlang.git /
     cmake --install build && \
     rm -rf /opt/hyprlang
 
+    
 # 7) hyprcursor (CORRIGIDO com include do toml++)
+# Dependências necessárias para compilar
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        git cmake ninja-build pkg-config build-essential
+
+# Instalar toml++ (header-only)
+RUN git clone --depth 1 https://github.com/marzer/tomlplusplus.git /opt/tomlplusplus && \
+    mkdir -p /usr/local/include/toml++ && \
+    cp -r /opt/tomlplusplus/include/toml++ /usr/local/include/ && \
+    rm -rf /opt/tomlplusplus
+
+# Clonar, compilar e instalar hyprcursor
 RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor && \
     sed -i '/add_subdirectory(hyprcursor-util)/d' /opt/hyprcursor/CMakeLists.txt && \
     cmake -S /opt/hyprcursor -B /opt/hyprcursor/build -G Ninja \
@@ -79,6 +92,7 @@ RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor
     cmake --build /opt/hyprcursor/build && \
     cmake --install /opt/hyprcursor/build && \
     rm -rf /opt/hyprcursor
+
 
 # 8) Terminal foot
 RUN git clone https://codeberg.org/dnkl/foot.git /opt/foot && \
