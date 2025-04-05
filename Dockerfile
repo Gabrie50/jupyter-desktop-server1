@@ -80,13 +80,17 @@ RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor
     rm -rf /opt/hyprcursor
 
 # 8) Hyprland v0.39.1
-RUN git clone --recursive -b v0.39.1 https://github.com/hyprwm/Hyprland.git /opt/Hyprland && \
-    cd /opt/Hyprland && \
-    cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release && \
-    cmake --build build && \
-    cmake --install build && \
-    rm -rf /opt/Hyprland
-
+RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor && \
+    rm -rf /opt/hyprcursor/hyprcursor-util && \
+    sed -i '/add_subdirectory(hyprcursor-util)/d' /opt/hyprcursor/CMakeLists.txt && \
+    cmake -S /opt/hyprcursor -B /opt/hyprcursor/build -G Ninja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DHYPRCURSOR_BUILD_TESTS=OFF \
+        -DHYPRCURSOR_BUILD_UTIL=OFF && \
+    cmake --build /opt/hyprcursor/build && \
+    cmake --install /opt/hyprcursor/build && \
+    rm -rf /opt/hyprcursor
+    
 # 9) Terminal foot
 RUN git clone https://codeberg.org/dnkl/foot.git /opt/foot && \
     cd /opt/foot && \
