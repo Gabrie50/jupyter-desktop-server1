@@ -12,7 +12,7 @@ RUN apt-get -y update && apt-get install -y \
     waybar \
     eww \
     hyprland \
-    wget
+    wget \
 
 # TurboVNC (igual)
 ARG TURBOVNC_VERSION=2.2.6
