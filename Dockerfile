@@ -84,19 +84,16 @@ RUN git clone --depth 1 https://github.com/marzer/tomlplusplus.git /opt/tomlplus
     mkdir -p /usr/local/include/toml++ && \
     cp -r /opt/tomlplusplus/include/toml++ /usr/local/include/ && \
     mkdir -p /usr/local/lib/pkgconfig && \
-    { cat << 'EOF'
-prefix=/usr/local
-exec_prefix=${prefix}
-includedir=${prefix}/include
-
-Name: tomlplusplus
-Description: Header-only TOML parser library
-Version: 3.2.4
-Requires:
-Libs:
-Cflags: -I${includedir}
-EOF
-    } > /usr/local/lib/pkgconfig/tomlplusplus.pc && \
+    echo "prefix=/usr/local" > /usr/local/lib/pkgconfig/tomlplusplus.pc && \
+    echo "exec_prefix=\${prefix}" >> /usr/local/lib/pkgconfig/tomlplusplus.pc && \
+    echo "includedir=\${prefix}/include" >> /usr/local/lib/pkgconfig/tomlplusplus.pc && \
+    echo "" >> /usr/local/lib/pkgconfig/tomlplusplus.pc && \
+    echo "Name: tomlplusplus" >> /usr/local/lib/pkgconfig/tomlplusplus.pc && \
+    echo "Description: Header-only TOML parser library" >> /usr/local/lib/pkgconfig/tomlplusplus.pc && \
+    echo "Version: 3.2.4" >> /usr/local/lib/pkgconfig/tomlplusplus.pc && \
+    echo "Requires:" >> /usr/local/lib/pkgconfig/tomlplusplus.pc && \
+    echo "Libs:" >> /usr/local/lib/pkgconfig/tomlplusplus.pc && \
+    echo "Cflags: -I\${includedir}" >> /usr/local/lib/pkgconfig/tomlplusplus.pc && \
     rm -rf /opt/tomlplusplus
 
 # 7.3) Clonar, compilar e instalar hyprcursor
