@@ -55,13 +55,10 @@ RUN git clone --depth 1 --branch v0.1.1 https://github.com/hyprwm/hyprutils.git 
 
 # 5) tomlplusplus
 RUN git clone --depth 1 --branch v3.2.0 https://github.com/marzer/tomlplusplus.git /opt/tomlplusplus && \
-    cd /opt/tomlplusplus && \
-    cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local && \
-    cmake --build build && \
-    cmake --install build && \
-    printf 'prefix=/usr/local\nexec_prefix=${prefix}\nlibdir=${exec_prefix}/lib\nincludedir=${prefix}/include\n\nName: tomlplusplus\nDescription: Header-only TOML parser library\nVersion: 3.2.0\nRequires:\nLibs:\nCflags: -I${includedir}\n' \
-        > /usr/local/lib/pkgconfig/tomlplusplus.pc && \
+    mkdir -p /usr/include/toml++ && \
+    cp -r /opt/tomlplusplus/include/toml++ /usr/include/ && \
     rm -rf /opt/tomlplusplus
+    
 
 # 6) hyprlang
 RUN git clone --depth 1 --branch v0.4.2 https://github.com/hyprwm/hyprlang.git /opt/hyprlang && \
