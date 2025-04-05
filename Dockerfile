@@ -110,7 +110,7 @@ RUN git clone --depth 1 https://github.com/hyprwm/hyprcursor.git /opt/hyprcursor
     
 
 
-# 8) Terminal foot
+# 8) Terminal foot (ajuste manual para erro de sandbox do Meson)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       git meson ninja-build \
@@ -119,9 +119,11 @@ RUN apt-get update && \
       libxkbcommon-x11-dev libtinfo-dev \
       libudev-dev libharfbuzz-dev && \
     rm -rf /var/lib/apt/lists/* && \
-    git clone --depth=1 https://codeberg.org/dnkl/foot.git /opt/foot && \
+    git clone https://codeberg.org/dnkl/foot.git /opt/foot && \
     cd /opt/foot && \
-    meson setup build --prefix=/usr && \
+    mkdir subprojects && \
+    cp -r fcft subprojects/fcft && \
+    meson setup build --prefix=/usr --wrap-mode=nodownload && \
     ninja -C build && \
     ninja -C build install && \
     cd / && rm -rf /opt/foot
