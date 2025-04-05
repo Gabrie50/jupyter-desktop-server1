@@ -18,10 +18,10 @@ RUN apt-get -y update && apt-get install -y \
     libevdev-dev \
     libxcb-xfixes0-dev
 
-# Corrigir o caminho dos arquivos para remover espaços
-ADD Hyprland_Wayland/Hyprland /opt/Hyprland
-ADD Hyprland_Wayland/foot /opt/foot
-ADD Hyprland_Wayland/eww /opt/eww
+# Copiar arquivos do diretório Hyprland_Wayland para o container
+COPY Hyprland_Wayland/Hyprland /opt/Hyprland
+COPY Hyprland_Wayland/foot /opt/foot
+COPY Hyprland_Wayland/eww /opt/eww
 
 # Instalar o Hyprland
 RUN cd /opt/Hyprland && make install
