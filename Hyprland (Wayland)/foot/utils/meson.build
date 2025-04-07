@@ -1,1 +1,0 @@
-executable('xtgettcap', 'xtgettcap.c')
