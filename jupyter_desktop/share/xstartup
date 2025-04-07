@@ -1,8 +1,12 @@
 #!/bin/sh
-export XDG_SESSION_TYPE=x11
 export DISPLAY=:0
+export XDG_SESSION_TYPE=x11
 export DESKTOP_SESSION=plasma
 export KDE_FULL_SESSION=true
 
-# Iniciar sessão Plasma
-exec startplasma-x11
+# Iniciar KDE Plasma
+startplasma-x11 &
+
+# Iniciar dock e widgets após o desktop
+(sleep 5 && plank &) &
+(sleep 6 && conky &) &
