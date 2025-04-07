@@ -1,7 +1,8 @@
 #!/bin/sh
+
 export DISPLAY=:0
 export XDG_SESSION_TYPE=x11
 export QT_X11_NO_MITSHM=1
 
-# Inicia o KDE Plasma
-startplasma-x11 &
+# Executa o KDE Plasma corretamente
+exec startplasma-x11
