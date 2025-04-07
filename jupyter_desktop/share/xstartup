@@ -1,4 +1,8 @@
 #!/bin/sh
+export XDG_SESSION_TYPE=x11
 export DISPLAY=:0
-cd "$HOME"
-exec /usr/bin/dbus-launch hyprl
+export DESKTOP_SESSION=plasma
+export KDE_FULL_SESSION=true
+
+# Iniciar sessão Plasma
+exec startplasma-x11
