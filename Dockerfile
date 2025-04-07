@@ -8,9 +8,12 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     firefox \
     wget \
     xorg \
-    wayland \
-    hyprland \
-    foot \
+    kde-plasma-desktop \
+    dolphin \
+    konsole \
+    plasma-workspace \
+    plasma-discover \
+    sddm \
     eww \
     python3 \
     python3-pip \
@@ -19,7 +22,9 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     curl \
     gnupg2 \
     ca-certificates \
-    dbus-x11
+    --no-install-recommends && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Instalando o Jupyter
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3 && \
