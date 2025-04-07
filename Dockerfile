@@ -2,7 +2,7 @@ FROM quay.io/jupyter/base-notebook:2025-04-01
 
 USER root
 
-# Atualizando pacotes e instalando ambiente gráfico leve e bonito
+# Atualizando pacotes e instalando ambiente gráfico com KDE + extras leves
 RUN apt-get -y -qq update && apt-get -y -qq install \
     dbus-x11 \
     xorg \
@@ -12,7 +12,6 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     konsole \
     plank \
     tint2 \
-    conky \
     curl \
     wget \
     python3 \
@@ -24,25 +23,23 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Instalação do Jupyter
-RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3 && \
-    pip3 install --no-cache-dir jupyter
-
-# Baixar e instalar TurboVNC
+# Instalando TurboVNC
 ARG TURBOVNC_VERSION=2.2.6
 RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc_${TURBOVNC_VERSION}_amd64.deb/download" -O turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
-    apt-get install -y -q ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
-    rm ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
+    apt-get install -y ./turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
+    rm turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
     ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
-# Corrigir permissões
+# Garantir permissões
 RUN chown -R $NB_UID:$NB_GID $HOME
 
-# Copiando arquivos de instalação
+# Adiciona o diretório do projeto (com `xstartup`, etc.)
 ADD . /opt/install
 RUN fix-permissions /opt/install
 
 USER $NB_USER
 
-# Atualizando o Conda (se houver environment.yml)
-RUN cd /opt/install && conda env update -n base --file environment.yml || true
+# Atualiza Conda com o environment.yml (caso exista)
+RUN cd /opt/install && \
+    if [ -f environment.yml ]; then conda env update -n base --file environment.yml; fi
+    
