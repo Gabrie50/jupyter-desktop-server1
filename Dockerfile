@@ -2,16 +2,15 @@ FROM quay.io/jupyter/base-notebook:2025-04-01
 
 USER root
 
-# Atualizando pacotes e instalando ambiente gráfico com KDE + extras leves
+# Atualizando pacotes e instalando KDE Plasma 6 completo com gerenciador de sessão
 RUN apt-get -y -qq update && apt-get -y -qq install \
     dbus-x11 \
     xorg \
     firefox \
-    kde-plasma-desktop \
+    sddm \
+    kde-full \
     dolphin \
     konsole \
-    plank \
-    tint2 \
     curl \
     wget \
     python3 \
@@ -30,16 +29,16 @@ RUN wget -q "https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}
     rm turbovnc_${TURBOVNC_VERSION}_amd64.deb && \
     ln -s /opt/TurboVNC/bin/* /usr/local/bin/
 
-# Garantir permissões
+# Garantir permissões corretas ao diretório HOME
 RUN chown -R $NB_UID:$NB_GID $HOME
 
-# Adiciona o diretório do projeto (com `xstartup`, etc.)
+# Adiciona os arquivos do projeto (ex: xstartup)
 ADD . /opt/install
 RUN fix-permissions /opt/install
 
 USER $NB_USER
 
-# Atualiza Conda com o environment.yml (caso exista)
+# Atualiza Conda se environment.yml existir
 RUN cd /opt/install && \
     if [ -f environment.yml ]; then conda env update -n base --file environment.yml; fi
     
