@@ -11,7 +11,6 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     kde-full \
     kdeedu \
     kdegames \
-    kdeplasma-addons \
     ksudoku \
     kde-full \
     dolphin \
