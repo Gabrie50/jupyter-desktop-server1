@@ -4,17 +4,18 @@ USER root
 
 RUN apt-get -y -qq update && apt-get -y -qq install \
     dbus-x11 \
+    Kwin_x11 \
     xorg \
     firefox \
     sddm \
-    ksudoku /
+    ksudoku \
     kde-full \
     dolphin \
     konsole \
     kolf \
     curl \
     wget \
-    nano /
+    nano \
     python3 \
     python3-pip \
     python3-dev \
