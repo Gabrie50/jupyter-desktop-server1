@@ -2,15 +2,15 @@ FROM quay.io/jupyter/base-notebook:2025-04-01
 
 USER root
 
-# Atualizar pacotes e instalar KDE Plasma 6 básico + utilitários
 RUN apt-get -y -qq update && apt-get -y -qq install \
     dbus-x11 \
     xorg \
     firefox \
     sddm \
-    kde-plasma-desktop \
+    kde-full \
     dolphin \
     konsole \
+    kolf \
     curl \
     wget \
     python3 \
@@ -21,6 +21,7 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     --no-install-recommends && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+    
 
 # Instalar TurboVNC
 ARG TURBOVNC_VERSION=2.2.6
