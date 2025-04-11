@@ -4,7 +4,7 @@ USER root
 
 RUN apt-get -y -qq update && apt-get -y -qq install \
     dbus-x11 \
-    Kwin-x11 \
+    kwin-x11 \
     xorg \
     firefox \
     sddm \
