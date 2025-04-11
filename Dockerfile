@@ -8,6 +8,10 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     xorg \
     firefox \
     sddm \
+    kde-full \
+    kdeedu \
+    kdegames \
+    kdeplasma-addons \
     ksudoku \
     kde-full \
     dolphin \
