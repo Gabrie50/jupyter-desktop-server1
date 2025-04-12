@@ -61,8 +61,7 @@ RUN wget -nc https://dl.winehq.org/wine-builds/winehq.key && \
 
 # Adiciona o repositório do WineHQ para o Ubuntu 22.04 (Jammy)
 RUN add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ jammy main'
-    ln -s /opt/wine/bin/* /usr/local/bin/
-
+   
 # Atualiza os pacotes e instala o WineHQ Stable
 RUN apt-get update && apt-get install -y --install-recommends winehq-stable && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
