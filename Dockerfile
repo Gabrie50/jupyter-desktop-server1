@@ -67,7 +67,7 @@ RUN apt-get update && apt-get install -y --install-recommends winehq-stable && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Mover a instalação do Wine para a pasta do TurboVNC
-RUN mv /opt/wine /opt/TurboVNC/wine && \
+RUN mv /opt/wine /opt/wine && \
     ln -s /opt/wine/bin/* /usr/local/bin/
     
 
