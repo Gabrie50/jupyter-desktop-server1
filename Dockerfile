@@ -4,18 +4,28 @@ USER root
 
 RUN apt-get -y -qq update && apt-get -y -qq install \
     dbus-x11 \
-    kwin-x11 \
     xorg \
-    firefox \
+    kwin-x11 \
     sddm \
-    kde-full \
-    kdeedu \
+    plasma-desktop \
+    kio \
+    kde-runtime \
     kdegames \
-    ksudoku \
-    kde-full \
     dolphin \
     konsole \
-    kolf \
+    kdeconnect \
+    kde-config-cron \
+    kinit \
+    kded5 \
+    kirigami2-dev \
+    libkf5config-dev \
+    libkf5widgetsaddons-dev \
+    libkf5coreaddons-dev \
+    libkf5kio-dev \
+    libkf5i18n-dev \
+    libkf5notifications-dev \
+    libkf5xmlgui-dev \
+    firefox \
     curl \
     wget \
     nano \
@@ -27,6 +37,7 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     --no-install-recommends && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+    
     
 
 # Instalar TurboVNC
