@@ -8,7 +8,6 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     kwin-x11 \
     sddm \
     kde-full \
-    kdeedu \
     plasma-desktop \
     kio \
     kio-extras \
@@ -19,15 +18,6 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     kdeconnect \
     kde-config-cron \
     kinit \
-    kded5 \
-    kirigami2-dev \
-    libkf5config-dev \
-    libkf5widgetsaddons-dev \
-    libkf5coreaddons-dev \
-    libkf5kio-dev \
-    libkf5i18n-dev \
-    libkf5notifications-dev \
-    libkf5xmlgui-dev \
     systemsettings \
     plasma-widgets-addons \
     firefox \
