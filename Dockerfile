@@ -9,7 +9,7 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     sddm \
     plasma-desktop \
     kio \
-    kde-runtime \
+    kio-extras \
     kdegames \
     dolphin \
     konsole \
