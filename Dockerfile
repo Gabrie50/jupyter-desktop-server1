@@ -11,49 +11,6 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     kde-full \
     kdeedu \
     kdegames \
-    kdegames-card-data \
-    kdegames-mahjongg-data \
-    kdeedu-khangman \
-    kanagram \
-    kigo \
-    killbots \
-    kiriki \
-    klickety \
-    knights \
-    kollision \
-    kolor-lines \
-    konquest \
-    ksirk \
-    kubrick \
-    lskat \
-    naval-battle \
-    palapeli \
-    picmi \
-    ktuberling \
-    kbreakout \
-    kdiamond \
-    kfourinline \
-    kjumpingcube \
-    kmines \
-    kpat \
-    kreversi \
-    ksnakeduel \
-    kspace \
-    ksquares \
-    ksudoku \
-    shisen \
-    bomber \
-    bovo \
-    katomic \
-    kblackbox \
-    kblocks \
-    kbounce \
-    kolf \
-    granatier \
-    blinken \
-    samegame \
-    knetwalk \
-    potato-guy \
     ksudoku \
     kde-full \
     dolphin \
