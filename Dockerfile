@@ -7,8 +7,9 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     xorg \
     kwin-x11 \
     sddm \
+    kde-full \
+    kdeedu \
     plasma-desktop \
-    kde-config-notifications \
     kio \
     kio-extras \
     kdegames \
@@ -27,6 +28,8 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     libkf5i18n-dev \
     libkf5notifications-dev \
     libkf5xmlgui-dev \
+    systemsettings \
+    plasma-widgets-addons \
     firefox \
     curl \
     wget \
