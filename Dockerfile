@@ -8,10 +8,11 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     kwin-x11 \
     sddm \
     plasma-desktop \
-    kde-config-notifications
+    kde-config-notifications \
     kio \
     kio-extras \
     kdegames \
+    katomic \
     dolphin \
     konsole \
     kdeconnect \
