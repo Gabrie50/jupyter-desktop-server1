@@ -7,23 +7,46 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     xorg \
     kwin-x11 \
     sddm \
-    kde-full \
     plasma-desktop \
-    kio \
-    kio-extras \
-    kdegames \
-    katomic \
+    kde-systemsettings \
     dolphin \
     konsole \
+    plasma-nm \
+    ark \
+    kwalletmanager \
+    plasma-pa \
+    plasma-workspace \
+    plasma-wayland-session \
+    kde-gtk-config \
     kdeconnect \
-    kde-config-cron \
-    kinit \
-    systemsettings \
-    plasma-widgets-addons \
-    firefox \
-    curl \
+    kdeplasma-addons \
+    kscreen \
+    kinfocenter \
+    sudo \
+    bash \
+    xorg-server \
+    xorg-xinit \
+    xorg-apps \
+    mesa \
+    xf86-video-vesa \
+    xdg-user-dirs \
+    xdg-utils \
+    dbus \
+    networkmanager \
+    ttf-dejavu \
+    ttf-liberation \
+    ttf-droid \
+    noto-fonts \
+    noto-fonts-cjk \
+    noto-fonts-emoji \
+    alsa-utils \
+    pulseaudio \
     wget \
+    git \
     nano \
+    curl \
+    unzip \
+    htop \
     python3 \
     python3-pip \
     python3-dev \
