@@ -19,7 +19,7 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     plasma-workspace-wayland \
     kde-config-gtk-style \
     kdeconnect \
-    kdeplasma-addons \
+    plasma-widgets-addons \
     kscreen \
     kinfocenter \
     sudo \
