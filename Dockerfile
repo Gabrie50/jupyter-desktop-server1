@@ -4,11 +4,11 @@ USER root
 
 RUN apt-get -y -qq update && apt-get -y -qq install \
     dbus-x11 \
-    xorg \
+    xserver-xorg \
     kwin-x11 \
     sddm \
     plasma-desktop \
-    kde-systemsettings \
+    systemsettings \
     dolphin \
     konsole \
     plasma-nm \
@@ -16,29 +16,24 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     kwalletmanager \
     plasma-pa \
     plasma-workspace \
-    plasma-wayland-session \
-    kde-gtk-config \
+    plasma-workspace-wayland \
+    kde-config-gtk-style \
     kdeconnect \
     kdeplasma-addons \
     kscreen \
     kinfocenter \
     sudo \
     bash \
-    xorg-server \
-    xorg-xinit \
-    xorg-apps \
-    mesa \
-    xf86-video-vesa \
+    xinit \
     xdg-user-dirs \
     xdg-utils \
     dbus \
-    networkmanager \
-    ttf-dejavu \
-    ttf-liberation \
-    ttf-droid \
-    noto-fonts \
-    noto-fonts-cjk \
-    noto-fonts-emoji \
+    network-manager \
+    fonts-dejavu \
+    fonts-liberation \
+    fonts-noto \
+    fonts-noto-cjk \
+    fonts-noto-color-emoji \
     alsa-utils \
     pulseaudio \
     wget \
@@ -55,6 +50,8 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     --no-install-recommends && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+    
+    
     
     
 # Instalar TurboVNC
