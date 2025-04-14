@@ -5,43 +5,34 @@ USER root
 RUN apt-get -y -qq update && apt-get -y -qq install \
     dbus-x11 \
     xserver-xorg \
-    kwin-x11 \
-    sddm \
-    plasma-desktop \
-    systemsettings \
-    dolphin \
-    konsole \
-    plasma-nm \
-    ark \
-    kwalletmanager \
-    plasma-pa \
-    plasma-workspace \
-    plasma-workspace-wayland \
-    kde-config-gtk-style \
-    kdeconnect \
-    plasma-widgets-addons \
-    kscreen \
-    kinfocenter \
-    sudo \
-    bash \
+    xfce4 \
+    xfce4-goodies \
+    lightdm \
+    policykit-1 \
     xinit \
     xdg-user-dirs \
     xdg-utils \
-    dbus \
     network-manager \
+    alsa-utils \
+    pulseaudio \
     fonts-dejavu \
     fonts-liberation \
     fonts-noto \
     fonts-noto-cjk \
     fonts-noto-color-emoji \
-    alsa-utils \
-    pulseaudio \
+    plank \
+    winetricks \
+    libvulkan1 \
+    mesa-vulkan-drivers \
+    vulkan-utils \
     wget \
     git \
     nano \
     curl \
     unzip \
     htop \
+    sudo \
+    bash \
     python3 \
     python3-pip \
     python3-dev \
@@ -50,6 +41,7 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     --no-install-recommends && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+    
     
     
     
