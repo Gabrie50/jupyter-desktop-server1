@@ -24,7 +24,7 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     winetricks \
     libvulkan1 \
     mesa-vulkan-drivers \
-    vulkan-utils \
+    vulkan-tools \
     wget \
     git \
     nano \
