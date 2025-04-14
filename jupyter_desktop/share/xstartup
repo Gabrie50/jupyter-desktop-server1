@@ -1,3 +1,3 @@
 #!/bin/sh
 cd "$HOME"
-exec /usr/bin/dbus-launch startplasma-x11
+exec /usr/bin/dbus-launch startxfce4
