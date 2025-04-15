@@ -62,33 +62,28 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         gnupg2 \
     && rm -rf /var/lib/apt/lists/*
 
-# Define a variável de ambiente para o Wine
+# Define variável de ambiente do Wine
 ENV WINEDLLOVERRIDES="mscoree,mshtml="
 
-# Adiciona a chave do repositório do WineHQ
+# Adiciona a chave do WineHQ
 RUN wget -nc https://dl.winehq.org/wine-builds/winehq.key && \
     gpg --dearmor winehq.key && \
     install -o root -g root -m 644 winehq.key.gpg /etc/apt/trusted.gpg.d/winehq-archive.gpg && \
     rm winehq.key winehq.key.gpg
 
-# Adiciona o repositório do WineHQ para o Ubuntu 22.04 (Jammy)
+# Adiciona o repositório do WineHQ para Ubuntu 22.04
 RUN add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ jammy main'
 
-# Atualiza os pacotes e instala o WineHQ Stable
+# Instala o Wine
 RUN apt-get update && apt-get install -y --install-recommends winehq-stable && \
     rm -rf /var/lib/apt/lists/*
 
-# Cria um lançador .desktop confiável para o Wine
+# Cria o atalho .desktop do Wine
 RUN mkdir -p /usr/share/applications && \
-    echo "[Desktop Entry]\n\
-Name=Wine\n\
-Exec=wine start /unix %f\n\
-Type=Application\n\
-StartupNotify=true\n\
-Terminal=false\n\
-Icon=wine\n\
-Categories=Utility;Application;" > /usr/share/applications/wine.desktop && \
+    printf "[Desktop Entry]\nName=Wine\nExec=wine start /unix %%f\nType=Application\nStartupNotify=true\nTerminal=false\nIcon=wine\nCategories=Utility;Application;\n" \
+    > /usr/share/applications/wine.desktop && \
     chmod +x /usr/share/applications/wine.desktop
+    
     
 
     
