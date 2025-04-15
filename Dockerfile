@@ -42,8 +42,7 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
     
-    
-    
+   
     
     
 # Instalar TurboVNC
@@ -61,7 +60,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         software-properties-common \
         wget \
         gnupg2 \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 # Define a variável de ambiente para o Wine
 ENV WINEDLLOVERRIDES="mscoree,mshtml="
@@ -69,15 +68,28 @@ ENV WINEDLLOVERRIDES="mscoree,mshtml="
 # Adiciona a chave do repositório do WineHQ
 RUN wget -nc https://dl.winehq.org/wine-builds/winehq.key && \
     gpg --dearmor winehq.key && \
-    mv winehq.key.gpg /etc/apt/trusted.gpg.d/winehq-archive.gpg
+    install -o root -g root -m 644 winehq.key.gpg /etc/apt/trusted.gpg.d/winehq-archive.gpg && \
+    rm winehq.key winehq.key.gpg
 
 # Adiciona o repositório do WineHQ para o Ubuntu 22.04 (Jammy)
 RUN add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ jammy main'
-   
+
 # Atualiza os pacotes e instala o WineHQ Stable
 RUN apt-get update && apt-get install -y --install-recommends winehq-stable && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/*
 
+# Cria um lançador .desktop confiável para o Wine
+RUN mkdir -p /usr/share/applications && \
+    echo "[Desktop Entry]\n\
+Name=Wine\n\
+Exec=wine start /unix %f\n\
+Type=Application\n\
+StartupNotify=true\n\
+Terminal=false\n\
+Icon=wine\n\
+Categories=Utility;Application;" > /usr/share/applications/wine.desktop && \
+    chmod +x /usr/share/applications/wine.desktop
+    
 
     
 
