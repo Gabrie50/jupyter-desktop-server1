@@ -2,6 +2,12 @@ FROM quay.io/jupyter/base-notebook:2025-04-01
 
 USER root
 
+RUN apt-get -y update \
+   firefox \
+
+   
+USER root
+
 RUN apt-get -y -qq update && apt-get -y -qq install \
     dbus-x11 \
     xserver-xorg \
