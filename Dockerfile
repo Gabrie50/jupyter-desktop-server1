@@ -61,6 +61,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         software-properties-common \
         wget \
         gnupg2 \
+        chromium-browser \
     && rm -rf /var/lib/apt/lists/*
 
 # Define variável de ambiente do Wine
