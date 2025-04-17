@@ -3,10 +3,21 @@ FROM quay.io/jupyter/base-notebook:2025-04-01
 
 USER root
 
-RUN apt-get -y update && apt-get install -y \
+RUN apt-get update && apt-get install -y \
     dbus-x11 \
-    qutebrowser
-   
+    qutebrowser \
+    libnss3 \
+    libxss1 \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libgtk-3-0 \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+USER jovyan
+
+RUN mkdir -p /home/jovyan/.config/qutebrowser && \
+    echo "c.qt.args = ['--disable-sandbox']" >> /home/jovyan/.config/qutebrowser/config.py
+    
 RUN apt-get -y -qq update && apt-get -y -qq install \
     dbus-x11 \
     xserver-xorg \
