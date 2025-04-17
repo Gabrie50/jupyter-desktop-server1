@@ -4,5 +4,6 @@ dependencies:
   - jupyter-server-proxy>=1.4
   - pip
   - websockify
+  - chromium
   - pip:
       - .
