@@ -1,8 +1,14 @@
 FROM quay.io/jupyter/base-notebook:2025-04-01
 
+
+USER root
+
+RUN apt-get -y update \
+ && apt-get install -y dbus-x11 \
+   qutebrowser \ 
+   
 USER root
    
-
 RUN apt-get -y -qq update && apt-get -y -qq install \
     dbus-x11 \
     xserver-xorg \
