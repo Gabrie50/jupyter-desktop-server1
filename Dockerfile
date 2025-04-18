@@ -13,11 +13,7 @@ RUN apt-get update && apt-get install -y \
     libgtk-3-0 \
    
 
-USER jovyan
 
-RUN mkdir -p /home/jovyan/.config/qutebrowser && \
-    echo "c.qt.args = ['--disable-sandbox']" >> /home/jovyan/.config/qutebrowser/config.py
-    
 RUN apt-get -y -qq update && apt-get -y -qq install \
     dbus-x11 \
     xserver-xorg \
@@ -58,7 +54,12 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
     
-   
+
+USER jovyan
+
+RUN mkdir -p /home/jovyan/.config/qutebrowser && \
+    echo "c.qt.args = ['--disable-sandbox']" >> /home/jovyan/.config/qutebrowser/config.py
+       
     
     
 # Instalar TurboVNC
