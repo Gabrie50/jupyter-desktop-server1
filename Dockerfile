@@ -55,12 +55,7 @@ RUN apt-get -y -qq update && apt-get -y -qq install \
     rm -rf /var/lib/apt/lists/*
     
 
-USER jovyan
 
-RUN mkdir -p /home/jovyan/.config/qutebrowser && \
-    echo "c.qt.args = ['--disable-sandbox']" >> /home/jovyan/.config/qutebrowser/config.py
-       
-    
     
 # Instalar TurboVNC
 ARG TURBOVNC_VERSION=2.2.6
@@ -118,4 +113,11 @@ WORKDIR /home/$NB_USER
 # Atualizar Conda se environment.yml existir
 RUN cd /opt/install && \
     if [ -f environment.yml ]; then conda env update -n base --file environment.yml; fi
+
+
+USER jovyan
+
+RUN mkdir -p /home/jovyan/.config/qutebrowser && \
+    echo "c.qt.args = ['--disable-sandbox']" >> /home/jovyan/.config/qutebrowser/config.py
+       
     
