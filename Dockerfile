@@ -115,9 +115,14 @@ RUN cd /opt/install && \
     if [ -f environment.yml ]; then conda env update -n base --file environment.yml; fi
 
 
+
+
+
 USER jovyan
 
 RUN mkdir -p /home/jovyan/.config/qutebrowser && \
+    echo "config.load_autoconfig(False)" > /home/jovyan/.config/qutebrowser/config.py && \
     echo "c.qt.args = ['--disable-sandbox']" >> /home/jovyan/.config/qutebrowser/config.py
-       
+    
+
     
