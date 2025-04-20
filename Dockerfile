@@ -4,7 +4,6 @@ FROM quay.io/jupyter/base-notebook:2025-04-01
 USER root
 
 RUN apt-get update && apt-get install -y \
-    dbus-x11 \
     qutebrowser \
     libnss3 \
     libxss1 \
