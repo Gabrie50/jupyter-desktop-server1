@@ -122,4 +122,12 @@ USER jovyan
 RUN mkdir -p /home/jovyan/.config/qutebrowser && \
     echo "config.load_autoconfig(False)" > /home/jovyan/.config/qutebrowser/config.py && \
     echo "c.qt.args = ['--disable-sandbox']" >> /home/jovyan/.config/qutebrowser/config.py
+
+RUN mkdir -p /home/jovyan/.config/qutebrowser && \
+    echo "config.load_autoconfig(False)" > /home/jovyan/.config/qutebrowser/config.py && \
+    echo "c.content.headers.user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'" >> /home/jovyan/.config/qutebrowser/config.py && \
+    echo "c.content.webrtc_ip_handling_policy = 'disable_non_proxied_udp'" >> /home/jovyan/.config/qutebrowser/config.py && \
+    echo "c.content.dns_prefetch = False" >> /home/jovyan/.config/qutebrowser/config.py && \
+    echo "c.content.canvas_reading = False" >> /home/jovyan/.config/qutebrowser/config.py && \
+    echo "c.content.reporting = False" >> /home/jovyan/.config/qutebrowser/config.py
     
